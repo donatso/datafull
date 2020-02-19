@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>parcelmap1</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+
+    <script src="/datafull/offline_plugins/d3.js"></script>
+    <script src="/datafull/offline_plugins/lodash.js"></script>
+
+</head>
+<body>
+<div id="dashboard"></div>
+
+<script type="module">
+  import StoreBase from "../../../../../../Store/index.js";
+  import helper from '../../../../../../helper/index.js'
+
+  import ParcelMap from '../index.js';
+
+  (async function f() {
+    StoreBase.inherit(Store);
+    function Store() {
+      StoreBase.apply(this, arguments);
+    }
+
+    const
+      dashboard_el = document.querySelector("#dashboard"),
+      store = new Store();
+
+    helper.style.stylize1(dashboard_el)
+
+    {
+      store.data.data_parcel_map = [];
+
+      store.event.on("all", function () {
+        store.data.data_parcel_map = helper.time.timeit(() => ParcelMap.setupData(store.data.active_data, {}), 'setupParcelMapData')();
+      })
+
+      store.event.on("active_change", function () {
+        store.data.data_parcel_map = ParcelMap.updateDataElement(
+          store.data.data_parcel_map,
+          helper.time.timeit(() => store.data.active_data.filter(d => d.__d.selected), 'filter_selected')(),
+          "selected",
+          {}
+        )
+      })
+    }
+
+    {
+      const config = {
+        key__geom: "geog",
+        initial_t: {
+          "k": 6370.295312015086,
+          "x": -1501.426542813596,
+          "y": 5873.348678622108
+        },
+        style: {
+          pos: [0.02, 0.7, 0.9, 0.02],
+        },
+        resizable: true
+      };
+
+      config.style.dim = helper.style.posToDim(config.style.pos);
+      const cont = dashboard_el.appendChild(document.createElement("div"));
+      const chart = new ParcelMap(
+        cont,
+        config,
+        store
+      );
+    }
+
+    const url = "/data/pilot1.json",
+      data = await helper.query.loadData(url);
+    for (let i = 0; i < 1; i++) {
+      store.data.insert(JSON.parse(JSON.stringify(data.results)), "parcels_"+i);
+    }
+    store.event.trigger("data_change", {new: "parcels_0"})
+    store.event.trigger("all")
+  })();
+
+</script>
+</body>
+</html>
