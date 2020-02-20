@@ -4,6 +4,7 @@ import BasicBarChart from "./components/charts/BarChart/models/BasicBarChart/ind
 import ParcelMap from "./components/charts/MapChart/models/ParcelMap/index.js"
 import TabsView from "./components/elements/TabsView.js"
 import Table from "./components/elements/Table.js"
+import DataFetcher from "./components/elements/DataFetcher.js"
 import FreeList from "./components/elements/FreeList.js"
 import helper from './helper/index.js'
 
@@ -15,6 +16,7 @@ window.df = {
   ParcelMap,
   TabsView,
   Table,
+  DataFetcher,
   FreeList,
   helper
 }

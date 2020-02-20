@@ -80,16 +80,33 @@
       );
     }
 
-    const url = "/data/heart.csv",
-      data = await df.helper.query.loadData(url);
     {
-      df.helper.manipulation.numifyArrayOfObjects(data)
+      const config = {
+        style: {
+          pos: [0.02, 0.95, 0.22, 0.72],
+        },
+        resizable: true,
+
+        autofills: [
+          {label: "heart", value: "https://raw.githubusercontent.com/donatso/datafull-datasets/master/heart.csv"}
+        ],
+        dataChange: function (data) {
+          df.helper.manipulation.numifyArrayOfObjects(data)
+
+          store.data.insert(data, null)
+          store.event.trigger("data_change")
+          store.event.trigger("all")
+        }
+      };
+
+      config.style.dim = df.helper.style.posToDim(config.style.pos);
+      const cont = dashboard_el.appendChild(document.createElement("div"));
+      const chart = new df.DataFetcher(
+        cont,
+        config,
+        store
+      );
     }
-    for (let i = 0; i < 1; i++) {
-      store.data.insert(JSON.parse(JSON.stringify(data)), "_" + i);
-    }
-    store.event.trigger("data_change")
-    store.event.trigger("all")
   })();
 
 </script>

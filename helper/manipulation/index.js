@@ -3,7 +3,7 @@ function numifyArrayOfObjects(data) {
     for (let k in d) {
       if (!d.hasOwnProperty(k)) continue
       const n = parseFloat(d[k])
-      if (!isNaN(n)) d[k] = n
+      if (!isNaN(n) && (""+n).length === d[k].length) d[k] = n
     }
   })
 }
