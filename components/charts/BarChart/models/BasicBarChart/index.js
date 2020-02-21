@@ -2,6 +2,7 @@ import BarChart from "../../index.js";
 
 import helper from "../../../../../helper/index.js"
 import Selector from "../../../../elements/Selector.js"
+import Svgs from "../../../../elements/Svgs.js"
 
 
 export default function BasicBarChart(cont, options, store) {
@@ -69,21 +70,38 @@ BasicBarChart.prototype.setupConfiguration = function() {
   const self = this;
   const config_cont = self.main_cont.append("div").style("position", "relative").style("z-index", "2").append("div")
   config_cont.style("position", "absolute").style("left", "0").style("top", "20px").style("z-index", "1");
+  const configs = {xaxis: null, yaxis: null, type: null}
+  {
+    configs.xaxis = {cont: newSelectCont(), options: [], label: "X axis: ", onChange: setXAxis};
+    configs.xaxis.selector = Selector(configs.xaxis);
+    configs.xaxis.cont.append("span").style("display", "inline-block")
+      .style("width", "16px")
+      .style("cursor", "pointer")
+      .html(Svgs.settings)
+  }
 
-  let selectors = {
-    xaxis: Selector({cont: newSelectCont(), options: [], label: "X axis: ", onChange: setXAxis}),
-    yaxis: Selector({cont: newSelectCont(), options: [], label: "Y axis: ", onChange: setYAxis}),
-    type: Selector({cont: newSelectCont(), options: Object.keys(BarChart.calculations), label: "Type: ", onChange: setType}),
+  {
+    configs.yaxis = {cont: newSelectCont(), options: [], label: "Y axis: ", onChange: setYAxis};
+    configs.yaxis.selector = Selector(configs.yaxis);
+    configs.yaxis.cont.append("span").style("display", "inline-block")
+      .style("width", "16px")
+      .style("cursor", "pointer")
+      .html(Svgs.settings)
+  }
+
+  {
+    configs.type = {cont: newSelectCont(), options: [], label: "Type: ", onChange: setType};
+    configs.type.selector = Selector(configs.type);
   }
 
   self.store.event.on("data_change", function () {
     const keys = self.store.data.datum_keys;
-    selectors.xaxis.updateOptions(keys)
-    selectors.yaxis.updateOptions(keys)
+    configs.xaxis.selector.updateOptions(keys)
+    configs.yaxis.selector.updateOptions(keys)
 
-    selectors.xaxis.updateValueMaybe(self.options.x_key)
-    selectors.yaxis.updateValueMaybe(self.options.y_key)
-    selectors.type.updateValueMaybe(self.options.type, true)
+    configs.xaxis.selector.updateValueMaybe(self.options.x_key)
+    configs.yaxis.selector.updateValueMaybe(self.options.y_key)
+    configs.type.selector.updateValueMaybe(self.options.type, true)
   })
 
   function newSelectCont() {

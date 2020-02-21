@@ -3,7 +3,7 @@ import Selector from "../../elements/Selector.js"
 export default function BarChart() {}
 
 BarChart.create = function (cont) {
-  const main_g = cont.append("svg").append("g").attr("class", "main_g");
+  const main_g = cont.append("svg").attr("class", "chart").append("g").attr("class", "main_g");
   main_g.append("g").attr("class", "x-axis");
   main_g.append("g").attr("class", "y-axis");
 }
@@ -105,7 +105,7 @@ BarChart.draw = function(data, cont, dim) {
   const
     d3x = d3.scaleBand().range([0, dim.inner_width]).padding(0.1),
     d3y = d3.scaleLinear().range([dim.inner_height, 0]),
-    main_g = cont.select("svg .main_g")
+    main_g = cont.select("svg.chart .main_g")
 
   d3x.domain(data.map(d => d.label));
   d3y.domain([0, d3.max(data, d => d.value)]);
@@ -157,8 +157,8 @@ BarChart.draw = function(data, cont, dim) {
 
 BarChart.updateElements = function(cont, dim) {
 
-  cont.select("svg").attr("width", dim.width).attr("height", dim.height);
-  const main_g = cont.select("svg .main_g")
+  cont.select("svg.chart").attr("width", dim.width).attr("height", dim.height);
+  const main_g = cont.select("svg.chart .main_g")
   main_g.attr("transform", "translate(" + dim.ml + "," + dim.mt + ")");
   main_g.select("g.x-axis").attr("transform", "translate(0," + dim.inner_height + ")");
   main_g.select("g.y-axis");
