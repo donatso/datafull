@@ -38,7 +38,7 @@ BarChart.calculations.medium = function (values) {
   return _.sum(non_null_values) / non_null_values.length;
 }
 
-BarChart.prepareData = function(data, {x_key, y_key, type, x_domain, slice}) {
+BarChart.prepareData = function(data, {x_key, y_key, type, slice}) {
   let bar_data = structureData(data);
   const calculationFun = BarChart.calculations[type];
   bar_data.forEach(datum => {
@@ -53,9 +53,26 @@ BarChart.prepareData = function(data, {x_key, y_key, type, x_domain, slice}) {
   return bar_data
 
   function structureData(data) {
-    let xKeyYValueObject = toXKeyYValueObject(data, x_key, y_key)
+    let classified = classify(data, x_key)
 
-    return Object.keys(xKeyYValueObject).map(k => ({label: k, values: xKeyYValueObject[k]}))
+    return Object.keys(classified)
+      .map(k => ({
+        label: k,
+        values: classified[k].map(d => y_key ? (d[y_key] || 0) : null)
+      }))
+  }
+
+  function classify(data, key) {
+    const classDict = {}
+    data.forEach(d => {
+      if (Array.isArray(d[key])) d[key].forEach(cls => push(cls, d))
+      else push(d[key], d)
+    })
+    function push(cls, value) {
+      if (!classDict.hasOwnProperty(cls)) classDict[cls] = []
+      classDict[cls].push(value)
+    }
+    return classDict
   }
 
   function toXKeyYValueObject(data, x_key, y_key) {

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>columns1</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+
+    <script src="/offline_plugins/d3.js"></script>
+    <script src="/offline_plugins/lodash.js"></script>
+    <script type="module" src="/index.js"></script>
+
+</head>
+<body>
+<div id="dashboard"></div>
+
+<script type="module">
+  ;(async function f() {
+    const df = window.df;
+
+    df.Store.inherit(Store);
+
+    function Store() {
+      df.Store.apply(this, arguments);
+    }
+
+    const dashboard_el = document.querySelector("#dashboard")
+    df.helper.style.stylize1(dashboard_el)
+
+    const store = new Store();
+    {
+      store.data.datum_keys = [];
+      store.event.on("data_change", function () {
+        const data = store.data.active_data
+        store.data.datum_keys = Object.keys(data.length > 0 ? data[0] : {}).sort().filter(k => ["__d"].indexOf(k) === -1)
+      })
+    }
+
+    {
+      const config = {
+        style: {
+          pos: [0.02, 0.2, 0.9, 0.02],
+        },
+        resizable: true,
+      };
+
+      config.style.dim = df.helper.style.posToDim(config.style.pos);
+      const cont = dashboard_el.appendChild(document.createElement("div"));
+      const chart = new df.Columns(
+        cont,
+        config,
+        store
+      );
+    }
+
+    const url = "/data/heart.csv",
+      data = await df.helper.query.loadData(url);
+
+    store.data.insert(data, null);
+    store.event.trigger("data_change")
+    store.event.trigger("all")
+
+  })();
+
+</script>
+</body>
+</html>

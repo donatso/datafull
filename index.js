@@ -6,6 +6,7 @@ import TabsView from "./components/elements/TabsView.js"
 import Table from "./components/elements/Table.js"
 import DataFetcher from "./components/elements/DataFetcher.js"
 import FreeList from "./components/elements/FreeList.js"
+import Columns from "./components/elements/Columns/index.js"
 import helper from './helper/index.js'
 
 
@@ -18,5 +19,6 @@ window.df = {
   Table,
   DataFetcher,
   FreeList,
+  Columns,
   helper
 }
