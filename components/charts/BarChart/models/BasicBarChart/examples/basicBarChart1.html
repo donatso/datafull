@@ -45,10 +45,11 @@
         },
         resizable: true,
 
-        x_key: "vrsta_zk",
-        y_key: "coowners_cnt",
-        type: "total",
-        slice: 10
+        configuration: {
+          x_axis:{value: "tags", treat_as: {value: 'list', input: {value: "|"}}},
+          y_axis:{value: "views", treat_as: {value: null}},
+          type:{value: "medium"}
+        }
       };
 
       config.style.dim = helper.style.posToDim(config.style.pos);
@@ -60,12 +61,12 @@
       );
     }
 
-    const url = "/data/pilot1.json",
+    const url = "/data/USvideos.tsv",
       data = await helper.query.loadData(url);
-    for (let i = 0; i < 1; i++) {
-      store.data.insert(JSON.parse(JSON.stringify(data.results)), "parcels_"+i);
-    }
-    store.event.trigger("data_change", {new: "parcels_0"})
+    console.log(data)
+    store.data.insert(data);
+
+    store.event.trigger("data_change")
     store.event.trigger("all")
   })();
 

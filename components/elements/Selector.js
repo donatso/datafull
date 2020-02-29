@@ -1,35 +1,18 @@
-function Selector({cont, options, label, onChange}) {
-
+function Selector({config, label, onChange}) {
+  const cont = d3.select(document.createElement("span"))
   cont.append("b").html(label);
   const select = cont.append("select");
   select.on("change", changed);
-  ["", ...options].forEach(k => select.append("option").attr("value", k).html(k));
+  ["", ...config.options].forEach(k => select.append("option").attr("value", k).html(k));
+  select.node().value = config.value;
 
   function changed() {
     const value = select.node().value;
-    onChange(value)
+    config.value = value
+    onChange()
   }
 
-  function updateOptions(_options) {
-    options = _options
-    select.html("");
-    ["", ...options].forEach(k => select.append("option").attr("value", k).html(k));
-  }
-
-  function updateValue(value, is_trigger) {
-    select.node().value = value;
-    if (is_trigger) changed()
-  }
-
-  function updateValueMaybe(value, is_trigger) {
-    if (options.indexOf(value) !== -1) updateValue.apply(null, arguments)
-  }
-
-  return {
-    updateOptions,
-    updateValue,
-    updateValueMaybe
-  }
+  return cont.node()
 }
 
 export default Selector;

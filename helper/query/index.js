@@ -3,6 +3,7 @@ async function loadData(url) {
     let data;
     if (data_url.includes(".json")) data = await d3.json(data_url);
     else if (data_url.includes(".csv")) data = await d3.csv(data_url);
+    else if (data_url.includes(".tsv")) data = await d3.tsv(data_url);
     return data;
   }
   let DATA = [];

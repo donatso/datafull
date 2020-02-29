@@ -2,7 +2,6 @@ import BarChart from "../../index.js";
 
 import helper from "../../../../../helper/index.js"
 import Selector from "../../../../elements/Selector.js"
-import Svgs from "../../../../elements/Svgs.js"
 
 
 export default function BasicBarChart(cont, options, store) {
@@ -38,24 +37,24 @@ BasicBarChart.prototype.setupEventListeners = function() {
 
 BasicBarChart.prototype.create = function () {
   const self = this;
-  BarChart.create(self.main_cont);
+  BarChart.chart.create(self.main_cont);
 }
 
 BasicBarChart.prototype.redraw = function() {
   const self = this;
   const data = self.store.data.active_data,
-    bar_data = helper.time.timeit(() => BarChart.prepareData(data, self.options), "preparebardata")()
-  BarChart.draw(bar_data, self.main_cont, self.dim)
+    bar_data = helper.time.timeit(() => BarChart.data.prepareData(data, self.options.configuration), "preparebardata")()
+  BarChart.chart.draw(bar_data, self.main_cont, self.dim)
 }
 
 BasicBarChart.prototype.setupDims = function () {
   const self = this;
-  self.dim = BarChart.setupDims(self.main_cont)
+  self.dim = BarChart.chart.setupDims(self.main_cont)
 }
 
 BasicBarChart.prototype.updateElements = function () {
   const self = this;
-  BarChart.updateElements(self.main_cont, self.dim)
+  BarChart.chart.updateElements(self.main_cont, self.dim)
 }
 
 BasicBarChart.prototype.resize = function () {
@@ -70,44 +69,34 @@ BasicBarChart.prototype.setupConfiguration = function() {
   const self = this;
   const config_cont = self.main_cont.append("div").style("position", "relative").style("z-index", "2").append("div")
   config_cont.style("position", "absolute").style("left", "0").style("top", "20px").style("z-index", "1");
-  const configs = {xaxis: null, yaxis: null, type: null}
-  {
-    configs.xaxis = {cont: newSelectCont(), options: [], label: "X axis: ", onChange: setXAxis};
-    configs.xaxis.selector = Selector(configs.xaxis);
-    configs.xaxis.cont.append("span").style("display", "inline-block")
-      .style("width", "16px")
-      .style("cursor", "pointer")
-      .html(Svgs.settings)
-  }
+  const treat_as_options = [
+    { value: "string" },
+    { value: "number" },
+    { value: "date" },
+    { value: "list", input: {placeholder: "separator"} }
+  ];
+  self.options.configuration = _.defaultsDeep(self.options.configuration, {
+    x_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
+    y_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
+    type:{options: Object.keys(BarChart.data.calculations), value: null},
 
-  {
-    configs.yaxis = {cont: newSelectCont(), options: [], label: "Y axis: ", onChange: setYAxis};
-    configs.yaxis.selector = Selector(configs.yaxis);
-    configs.yaxis.cont.append("span").style("display", "inline-block")
-      .style("width", "16px")
-      .style("cursor", "pointer")
-      .html(Svgs.settings)
-  }
+    onChange: self.redraw.bind(self),
+    slice: 10,
+    excluded: ["other"]
+  })
 
-  {
-    configs.type = {cont: newSelectCont(), options: [], label: "Type: ", onChange: setType};
-    configs.type.selector = Selector(configs.type);
+  function reConfigure(){
+    config_cont.html("")
+    const config_node = BarChart.configuration.create(self.options.configuration);
+    config_cont.node().appendChild(config_node)
   }
 
   self.store.event.on("data_change", function () {
     const keys = self.store.data.datum_keys;
-    configs.xaxis.selector.updateOptions(keys)
-    configs.yaxis.selector.updateOptions(keys)
+    self.options.configuration.x_axis.options = keys;
+    self.options.configuration.y_axis.options = keys;
 
-    configs.xaxis.selector.updateValueMaybe(self.options.x_key)
-    configs.yaxis.selector.updateValueMaybe(self.options.y_key)
-    configs.type.selector.updateValueMaybe(self.options.type, true)
+    reConfigure();
   })
-
-  function newSelectCont() {
-    return config_cont.append("div").style("display", "inline-block").style("margin-left", "20px")
-  }
-  function setXAxis(v) {self.options.x_key = v; self.redraw();}
-  function setYAxis(v) {self.options.y_key = v; self.redraw();}
-  function setType(v) {self.options.type = v; self.redraw();}
 }
+
