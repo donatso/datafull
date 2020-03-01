@@ -1,7 +1,5 @@
 import BarChart from "../../index.js";
-
 import helper from "../../../../../helper/index.js"
-import Selector from "../../../../elements/Selector.js"
 
 
 export default function BasicBarChart(cont, options, store) {

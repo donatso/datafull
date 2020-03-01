@@ -48,7 +48,7 @@ Options.prototype.createOptionNodes = function (cont) {
     node.setAttribute("class", 'treat_as_option')
     node.addEventListener("click", clicked)
     if (d.hasOwnProperty("input")) addInput(node)
-    if (d.value) markSelectedValue(d)
+    if (self.config.value && (self.config.value === d.value)) markSelectedValue(d)
 
     node.style.cursor = 'pointer'
     node.style.padding = '0 10px'
@@ -76,7 +76,7 @@ Options.prototype.createOptionNodes = function (cont) {
 
     input.style.width = "50px"
     input.style.marginLeft = "20px"
-    input.placeholder = d.placeholder
+    input.placeholder = d.input.placeholder
     input.style.textAlign = "center"
     input.style.fontWeight = "800"
   }
