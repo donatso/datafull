@@ -5,8 +5,18 @@ const treat_as_options = [
   { value: "string" },
   { value: "number" },
   { value: "date" },
-  { value: "list", input: {placeholder: "separator", value: null} }
-];
+  { value: "list", input: {placeholder: "separator"}}
+]
+
+const configuration_default = {
+  x_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
+  y_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
+  type:{options: [], value: null},
+
+  onChange: ()=>{},
+  slice: 10,
+  excluded: ["other"]
+}
 
 function create(configuration) {
   const root_cont = document.createElement('div')
@@ -49,4 +59,4 @@ function createType(configuration) {
 }
 
 
-export default {create}
+export default {create, configuration_default}

@@ -65,23 +65,12 @@ BasicBarChart.prototype.resize = function () {
 
 BasicBarChart.prototype.setupConfiguration = function() {
   const self = this;
-  const config_cont = self.main_cont.append("div").style("position", "relative").style("z-index", "2").append("div")
-  config_cont.style("position", "absolute").style("left", "0").style("top", "20px").style("z-index", "1");
-  const treat_as_options = [
-    { value: "string" },
-    { value: "number" },
-    { value: "date" },
-    { value: "list", input: {placeholder: "separator"} }
-  ];
-  self.options.configuration = _.defaultsDeep(self.options.configuration, {
-    x_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
-    y_axis:{options: [], value: null, treat_as: {options: treat_as_options, value: null, input: {value: null}}},
-    type:{options: Object.keys(BarChart.data.calculations), value: null},
+  const config_cont = self.main_cont.append("div").style("margin-top", "10px").style("position", "absolute")
 
+  self.options.configuration = _.defaultsDeep(self.options.configuration, {
     onChange: self.redraw.bind(self),
-    slice: 10,
-    excluded: ["other"]
-  })
+    type:{options: Object.keys(BarChart.data.calculations)}
+  }, BarChart.configuration.configuration_default)
 
   function reConfigure(){
     config_cont.html("")

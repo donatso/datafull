@@ -9,10 +9,10 @@ function setupDims(cont) {
   const dim = {
     width: rect.width,
     height: rect.height,
-    mt: 70,
+    mt: 60,
     mr: 20,
     mb: 70,
-    ml: 70
+    ml: 40
   };
   dim.inner_width = dim.width - dim.ml - dim.mr;
   dim.inner_height = dim.height - dim.mt - dim.mb;
@@ -71,7 +71,7 @@ function draw(data, cont, dim) {
     .attr("dy", "-.55em")
     .attr("transform", "rotate(-90)");
 
-  main_g.select("g.y-axis").call(d3.axisLeft(d3y));
+  main_g.select("g.y-axis").call(d3.axisLeft(d3y).tickFormat(d3.format(".0s")));
 }
 
 function updateElements(cont, dim) {
