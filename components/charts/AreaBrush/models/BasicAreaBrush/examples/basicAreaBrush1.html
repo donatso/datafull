@@ -7,8 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
 
-    <script src="/datafull/offline_plugins/d3.js"></script>
-    <script src="/datafull/offline_plugins/lodash.js"></script>
+    <script src="/offline_plugins/d3.js"></script>
+    <script src="/offline_plugins/lodash.js"></script>
 
 </head>
 <body>
@@ -44,9 +44,11 @@
         },
         resizable: true,
 
-        scale_key: "coowners_cnt",
-        scaleFrom: -Infinity,
-        scaleTo: Infinity,
+
+        configuration: {
+          x_axis:{value: "coowners_cnt", treat_as: {value: 'number'}},
+          filter: {from: -Infinity, to: Infinity}
+        },
       };
 
       config.style.dim = helper.style.posToDim(config.style.pos);
@@ -60,10 +62,10 @@
 
     const url = "/data/pilot1.json",
       data = await helper.query.loadData(url);
-    for (let i = 0; i < 1; i++) {
-      store.data.insert(JSON.parse(JSON.stringify(data.results)), "parcels_"+i);
-    }
-    store.event.trigger("data_change", {new: "parcels_0"})
+
+    store.data.insert(JSON.parse(JSON.stringify(data.results)), null);
+
+    store.event.trigger("data_change")
     store.event.trigger("all")
   })();
 

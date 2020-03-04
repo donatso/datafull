@@ -1,7 +1,6 @@
 import AreaBrush from "../../index.js";
 
 import helper from "../../../../../helper/index.js"
-import Selector from "../../../../elements/Selector.js"
 
 
 export default function BasicAreaBrush(cont, options, store) {
@@ -33,31 +32,31 @@ BasicAreaBrush.prototype.setupEventListeners = function() {
 
   self.store.event.on("all", function () {
     self.redraw()
-  })
+  });
 
   self.store.filter.add({filter: self.filterDatum()})
 }
 
 BasicAreaBrush.prototype.create = function () {
   const self = this;
-  AreaBrush.create(self.main_cont);
+  AreaBrush.chart.create(self.main_cont);
 }
 
 BasicAreaBrush.prototype.redraw = function() {
   const self = this;
   const data = self.store.data.data_stash,
-    area_data = helper.time.timeit(() => AreaBrush.createFrequencyData(data, self.options.scale_key,self.options), "preparebardata")();
-  AreaBrush.draw(area_data, self.main_cont, self.dim, self.scaleChange.bind(self))
+    area_data = helper.time.timeit(() => AreaBrush.data.createFrequencyData(data, self.options.configuration.x_axis.value, self.options), "preparebardata")();
+  AreaBrush.chart.draw(area_data, self.main_cont, self.dim, self.scaleChange.bind(self))
 }
 
 BasicAreaBrush.prototype.setupDims = function () {
   const self = this;
-  self.dim = AreaBrush.setupDims(self.main_cont)
+  self.dim = AreaBrush.chart.setupDims(self.main_cont)
 }
 
 BasicAreaBrush.prototype.updateElements = function () {
   const self = this;
-  AreaBrush.updateElements(self.main_cont, self.dim)
+  AreaBrush.chart.updateElements(self.main_cont, self.dim)
 }
 
 BasicAreaBrush.prototype.resize = function () {
@@ -70,37 +69,39 @@ BasicAreaBrush.prototype.resize = function () {
 
 BasicAreaBrush.prototype.setupConfiguration = function() {
   const self = this;
-  const config_cont = self.main_cont.append("div").style("position", "relative").style("z-index", "2").append("div")
-  config_cont.style("position", "absolute").style("left", "0").style("top", "3px").style("z-index", "1");
+  const config_cont = self.main_cont.append("div").style("position", "absolute").style("margin-top", "10px")
 
-  let selectors = {
-    scale_key: Selector({cont: newSelectCont(), options: [], label: "scale_key: ", onChange: setScaleKey}),
+  self.options.configuration = _.defaultsDeep(self.options.configuration, {
+    onChange: self.redraw.bind(self),
+  }, AreaBrush.configuration.configuration_default)
+
+  function reConfigure(){
+    config_cont.html("")
+    const config_node = AreaBrush.configuration.create(self.options.configuration);
+    config_cont.node().appendChild(config_node)
   }
 
   self.store.event.on("data_change", function () {
     const keys = self.store.data.datum_keys;
-    selectors.scale_key.updateOptions(keys)
-    selectors.scale_key.updateValueMaybe(self.options.scale_key, true)
+    self.options.configuration.x_axis.options = keys;
+
+    reConfigure();
   })
 
-  function newSelectCont() {
-    return config_cont.append("div").style("display", "inline-block").style("margin-left", "20px")
-  }
-  function setScaleKey(v) {self.options.scale_key = v; self.redraw();}
 }
 
 BasicAreaBrush.prototype.filterDatum = function () {
   const self = this;
   return function (d) {
-    const [from, to, v] = [self.options.scaleFrom, self.options.scaleTo, d[self.options.scale_key]]
+    const [from, to, v] = [self.options.configuration.filter.from, self.options.configuration.filter.to, d[self.options.configuration.x_axis.value]]
     return (from < v && to > v) || (from === v || to === v);
   }
 }
 
 BasicAreaBrush.prototype.scaleChange = function (domain) {
   const self = this;
-  self.options.scaleFrom = domain[0]
-  self.options.scaleTo = domain[1]
+  self.options.configuration.filter.from = domain[0]
+  self.options.configuration.filter.to = domain[1]
 
   self.filterLazyCall()
 }

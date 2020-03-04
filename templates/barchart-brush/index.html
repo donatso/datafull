@@ -44,10 +44,12 @@
         },
         resizable: true,
 
-        x_key: "sex",
-        y_key: "age",
-        type: "total",
-        slice: 10
+
+        configuration: {
+          x_axis:{value: "sex", treat_as: {value: null}},
+          y_axis:{value: "age", treat_as: {value: null}},
+          type:{value: "total"}
+        }
       };
 
       config.style.dim = df.helper.style.posToDim(config.style.pos);
@@ -66,9 +68,10 @@
         },
         resizable: true,
 
-        scale_key: "age",
-        scaleFrom: -Infinity,
-        scaleTo: Infinity,
+        configuration: {
+          x_axis:{value: "age", treat_as: {value: 'number'}},
+          filter: {from: -Infinity, to: Infinity}
+        },
       };
 
       config.style.dim = df.helper.style.posToDim(config.style.pos);
