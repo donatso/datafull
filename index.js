@@ -1,6 +1,7 @@
 import Store from "./Store/index.js";
 import BasicAreaBrush from "./components/charts/AreaBrush/models/BasicAreaBrush/index.js"
 import BasicBarChart from "./components/charts/BarChart/models/BasicBarChart/index.js"
+import BasicPieChart from "./components/charts/PieChart/models/BasicPieChart/index.js"
 import ParcelMap from "./components/charts/MapChart/models/ParcelMap/index.js"
 import TabsView from "./components/elements/TabsView.js"
 import Table from "./components/elements/Table.js"
@@ -14,6 +15,7 @@ window.df = {
   Store,
   BasicAreaBrush,
   BasicBarChart,
+  BasicPieChart,
   ParcelMap,
   TabsView,
   Table,
