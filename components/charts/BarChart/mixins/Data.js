@@ -1,5 +1,5 @@
-
 const calculations = {}
+
 calculations.count = function (values) {
   return values.length;
 }
@@ -51,18 +51,6 @@ function prepareData(data, configuration) {
       classDict[cls].push(value)
     }
     return classDict
-  }
-
-  function toXKeyYValueObject(data, x_key, y_key) {
-    const obj = {}
-    data.forEach((datum, iter) => {
-      const x_val = datum[x_key],
-        y_val = y_key ? (datum[y_key] || 0) : null;
-      if (!obj.hasOwnProperty(x_val)) obj[x_val] = [];
-      obj[x_val].push(y_val)
-    });
-
-    return obj
   }
 
   function strToList(str, separator) {
