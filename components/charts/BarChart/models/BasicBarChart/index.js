@@ -40,9 +40,19 @@ BasicBarChart.prototype.create = function () {
 
 BasicBarChart.prototype.redraw = function() {
   const self = this;
-  const data = self.store.data.active_data,
-    bar_data = helper.time.timeit(() => BarChart.data.prepareData(data, self.options.configuration), "preparebardata")()
+  const bar_data = self.prepareData()
   BarChart.chart.draw(bar_data, self.main_cont, self.dim)
+}
+
+BasicBarChart.prototype.prepareData = function() {
+  const self = this;
+  let data = self.store.data.active_data,
+    bar_data = BarChart.data.setupBarData(data, self.options.configuration);
+
+  bar_data = bar_data.sort((a,b) => b.value - a.value)
+  bar_data = bar_data.slice(0, 10)
+
+  return bar_data
 }
 
 BasicBarChart.prototype.setupDims = function () {
