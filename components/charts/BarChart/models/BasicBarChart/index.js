@@ -49,7 +49,7 @@ BasicBarChart.prototype.prepareData = function() {
   let data = self.store.data.active_data,
     bar_data = BarChart.data.setupBarData(data, self.options.configuration);
 
-  bar_data = bar_data.sort((a,b) => b.value - a.value)
+  bar_data = bar_data.sort((a,b) => b.y_value - a.y_value)
   bar_data = bar_data.slice(0, 10)
 
   return bar_data

@@ -18,11 +18,15 @@ function structureData(data, x_key, y_key, x_axis_treat_as) {
 
   return Object.keys(classified)
     .map(k => ({
-      label: k,
-      values: classified[k].map(d => y_key ? (parseFloat(d[y_key]) || 0) : null)
+      x_key,
+      x_value: k,
+
+      y_key,
+      y_values: classified[k].map(d => y_key ? (parseFloat(d[y_key]) || 0) : null)
     }))
 
   function classify(data, key) {
+    console.log(key)
     const classDict = {}
     data.forEach(d => {
       if (x_axis_treat_as.value === "list") strToList(d[key], x_axis_treat_as.input.value).forEach(cls => push(cls, d))
@@ -42,12 +46,14 @@ function structureData(data, x_key, y_key, x_axis_treat_as) {
   }
 }
 
-function createOther(data, slice) {
+function createOther(data, x_key, slice) {
   const other = {
-    label: "other",
-    value: data.reduce(
+    x_key,
+    x_value: "other",
+    y_key: null,
+    y_value: data.reduce(
       (previousValue, d, currentIndex) =>
-        previousValue + (currentIndex < slice ? 0 : d.value),
+        previousValue + (currentIndex < slice ? 0 : d.y_value),
       0
     )
   };
@@ -64,8 +70,8 @@ function setupBarData(data, configuration) {
   let bar_data = structureData(data, x_key, y_key, x_axis_treat_as);
   const calculationFun = calculations[type];
   bar_data.forEach(datum => {
-    datum.value = calculationFun(datum.values);
-    delete datum.values;
+    datum.y_value = calculationFun(datum.y_values);
+    delete datum.y_values;
   });
 
   return bar_data;
@@ -91,16 +97,16 @@ function setupStackBarData(data, configuration) {
   function appendRectYvalueToYvalues(bar_data) {
     bar_data.forEach(d => {
       let node = findOrCreateNode(d);
-      node.values.push(d)
-      node.values_total += d.value
+      node.y_values.push(d)
+      node.y_values_total += d.y_value
     })
   }
 
   function findOrCreateNode(datum) {
-    if (!bar_stack_data_dct.hasOwnProperty(datum.label)) {
-      bar_stack_data_dct[datum.label] = {label: datum.label, values: [], values_total: 0}
+    if (!bar_stack_data_dct.hasOwnProperty(datum.x_value)) {
+      bar_stack_data_dct[datum.x_value] = {x_value: datum.x_value, x_key: datum.x_key, y_values: [], y_values_total: 0}
     }
-    return bar_stack_data_dct[datum.label]
+    return bar_stack_data_dct[datum.x_value]
   }
 }
 

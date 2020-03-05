@@ -48,9 +48,9 @@ StackBarChart.prototype.redraw = function() {
 StackBarChart.prototype.prepareData = function(data) {
   const self = this;
   let bar_stack_data = BarChart.data.setupStackBarData(data, self.options.configuration)
-
-  bar_stack_data = bar_stack_data.sort((a,b) => b.values_total - a.values_total)
+  bar_stack_data = bar_stack_data.sort((a,b) => b.y_values_total - a.y_values_total)
   bar_stack_data = bar_stack_data.slice(0, 10)
+  console.log(bar_stack_data)
 
   return bar_stack_data
 }
@@ -97,4 +97,3 @@ StackBarChart.prototype.setupConfiguration = function() {
     reConfigure();
   })
 }
-
