@@ -71,21 +71,10 @@ function draw(data, cont, dim) {
   }
 }
 
-function brushed(d3x, scaleChange) {
-
-  return function () {
-    if (!d3.event.sourceEvent) return;
-    const s = d3.event.selection,
-      domain = s.map(d3x.invert, d3x);
-    scaleChange(domain)
-  }
-
-}
 
 export default {
   create,
   setupDims,
   updateElements,
   draw,
-  brushed
 }

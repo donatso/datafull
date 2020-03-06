@@ -43,7 +43,7 @@
 
 
         configuration: {
-          x_axis:{value: "coowners_cnt", treat_as: {value: 'number'}},
+          x_axis:{value: "dislikes", treat_as: {value: 'number'}},
           filter: {from: -Infinity, to: Infinity}
         },
       };
@@ -57,10 +57,10 @@
       );
     }
 
-    const url = "/data/pilot1.json",
+    const url = "/data/USvideos.tsv",
       data = await df.helper.query.loadData(url);
 
-    store.data.insert(JSON.parse(JSON.stringify(data.results)), null);
+    store.data.insert(JSON.parse(JSON.stringify(data)), null);
 
     store.event.trigger("data_change")
     store.event.trigger("all")
