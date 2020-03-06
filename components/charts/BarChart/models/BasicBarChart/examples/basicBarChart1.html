@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>basicBarChart1</title>
+  <meta charset="UTF-8">
+  <title>basicBarChart1</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
 
-    <script src="/offline_plugins/d3.js"></script>
-    <script src="/offline_plugins/lodash.js"></script>
+  <script src="/offline_plugins/d3.js"></script>
+  <script src="/offline_plugins/lodash.js"></script>
+  <script type="module" src="/index.js"></script>
+
 
 </head>
 <body>
 <div id="dashboard"></div>
 
 <script type="module">
-  import BasicBarChart from "../index.js"
-  import StoreBase from "../../../../../../Store/index.js";
-  import helper from '../../../../../../helper/index.js'
-
-
   (async function f() {
-    StoreBase.inherit(Store);
+    df.Store.inherit(Store);
     function Store() {
-      StoreBase.apply(this, arguments);
+      df.Store.apply(this, arguments);
     }
 
     const dashboard_el = document.querySelector("#dashboard")
-    helper.style.stylize1(dashboard_el)
+      df.helper.style.stylize1(dashboard_el)
 
     const store = new Store();
     {
@@ -46,15 +43,15 @@
         resizable: true,
 
         configuration: {
-          x_axis:{value: "tags", treat_as: {value: 'list', input: {value: "|"}}},
-          y_axis:{value: "views", treat_as: {value: null}},
-          type:{value: "total"}
+          x_axis: {value: "tags", treat_as: {value: 'list', input: {value: "|"}}},
+          y_axis: {value: "views", treat_as: {value: null}},
+          type: {value: "total"}
         }
       };
 
-      config.style.dim = helper.style.posToDim(config.style.pos);
+      config.style.dim = df.helper.style.posToDim(config.style.pos);
       const cont = dashboard_el.appendChild(document.createElement("div"));
-      const chart = new BasicBarChart(
+      const chart = new df.BasicBarChart(
         cont,
         config,
         store
@@ -62,7 +59,7 @@
     }
 
     const url = "/data/USvideos.tsv",
-      data = await helper.query.loadData(url);
+      data = await df.helper.query.loadData(url);
     console.log(data)
     store.data.insert(data);
 
