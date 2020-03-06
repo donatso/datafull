@@ -73,6 +73,7 @@ function draw(data, cont, dim) {
   }
 
   function drawStackRects() {
+    const color = d3.scaleOrdinal(d3.schemeDark2);
     const node = main_g.selectAll("g.node").data(data, d => d.x_value);
 
     node.exit().remove();
@@ -108,7 +109,7 @@ function draw(data, cont, dim) {
           .attr("y", d3y(y_value))
           .attr("width", d3x.bandwidth())
           .attr("height", dim.inner_height - d3y(datum.y_value))
-          .style("fill", i ? "red" : "green")
+          .style("fill", color(datum.y_key))
           .attr("title", d => d.x_value);
 
       })

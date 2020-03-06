@@ -18,8 +18,7 @@ function draw(data, cont, dim) {
   const pie_g = main_g.append("g")
       .attr("transform", `translate(${dim.width / 2}, ${dim.height / 2})`);
 
-  const color = d3.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb",
-    "#e78ac3","#a6d854","#ffd92f"]);
+  const color = d3.scaleOrdinal(d3.schemeDark2);
 
   const pie = d3.pie()
     .value(d => d.y_value)
