@@ -79,7 +79,7 @@ StackBarChart.prototype.setupConfiguration = function() {
 
   self.options.configuration = _.defaultsDeep(self.options.configuration, {
     onChange: self.redraw.bind(self),
-    type:{options: Object.keys(BarChart.data.calculations)},
+    type:{options: BarChart.data.calculation_types},
     slice: 0
   }, BarChart.configuration.configuration_default)
 

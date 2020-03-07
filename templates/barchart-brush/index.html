@@ -94,8 +94,6 @@
           {label: "heart", value: "https://raw.githubusercontent.com/donatso/datafull-datasets/master/heart.csv"}
         ],
         dataChange: function (data) {
-          df.helper.manipulation.numifyArrayOfObjects(data)
-
           store.data.insert(data, null)
           store.event.trigger("data_change")
           store.event.trigger("all")

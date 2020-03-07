@@ -41,7 +41,7 @@ BasicLineChart.prototype.create = function () {
 BasicLineChart.prototype.redraw = function() {
   const self = this;
   const data = self.store.data.data_stash,
-    area_data = helper.time.timeit(() => LineChart.data.createFrequencyData(data, self.options.configuration.x_axis.value, self.options), "preparebardata")();
+    area_data = helper.time.timeit(() => helper.manipulation.createFrequencyData(data, self.options.configuration.x_axis.value, self.options), "preparebardata")();
   LineChart.chart.draw(area_data, self.main_cont, self.dim)
 }
 

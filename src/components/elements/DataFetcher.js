@@ -79,8 +79,6 @@ DataFetcher.prototype.fetchQuery = async function () {
 DataFetcher.prototype.dataChange = function(data) {
   const self = this;
 
-  helper.manipulation.numifyArrayOfObjects(data)
-
   self.store.data.insert(data, null)
   self.store.event.trigger("data_change")
   self.store.event.trigger("all")
