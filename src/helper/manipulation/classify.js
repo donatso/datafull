@@ -43,7 +43,6 @@ function classifyData(data, x_key, y_key, x_axis_treat_as) {
     }
   }
 
-
   function classify(data, key) {
     const classDict = {}
     data.forEach(d => pushToObjectKey(classDict, d[key], d))
@@ -60,7 +59,7 @@ function classifiedDatumsToValue(classified, value_key, calculation_type) {
   const calculationFun = arrayOfValuesToValueCalculations[calculation_type];
   for (let cls in classified) {
     if (!classified.hasOwnProperty(cls)) continue
-    const datum_values = classified[cls].map(d => +d[value_key])  // TODO: check if it should be a number
+    const datum_values = classified[cls].map(d => +d[value_key]).filter(v => !isNaN(v))  // TODO: check if it should be a number
     classified[cls] = calculationFun(datum_values)
   }
   return classified

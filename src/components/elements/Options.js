@@ -58,7 +58,7 @@ Options.prototype.createOptionNodes = function (cont) {
   function clicked(event) {
     const d = event.target.__d;
     markSelectedValue(d);
-    self.config.value = d;
+    self.config.value = d.value;
     self.onChange();
     self.popup();
   }

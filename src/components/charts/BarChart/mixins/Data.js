@@ -10,11 +10,8 @@ function setupBarData(data, configuration) {
     configuration.x_axis.treat_as
   ];
   let classified = helper.manipulation.classify.classifyData(data, x_key, y_key, x_axis_treat_as);
-  console.log(Object.values(classified).slice(0,10))
   classified = helper.manipulation.classify.classifiedDatumsToValue(classified, y_key, calculation_type)
-  console.log(classified)
   classified = helper.manipulation.classify.classifiedToXaxisYaxisStructureArray(classified, x_key, y_key)
-  console.log(classified)
 
   return classified;
 }

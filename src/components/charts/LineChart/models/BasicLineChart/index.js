@@ -40,9 +40,32 @@ BasicLineChart.prototype.create = function () {
 
 BasicLineChart.prototype.redraw = function() {
   const self = this;
-  const data = self.store.data.data_stash,
-    area_data = helper.time.timeit(() => helper.manipulation.createFrequencyData(data, self.options.configuration.x_axis.value, self.options), "preparebardata")();
-  LineChart.chart.draw(area_data, self.main_cont, self.dim)
+  const line_data = self.prepareData()
+  LineChart.chart.draw(line_data, self.main_cont, self.dim, self.options.configuration)
+}
+
+BasicLineChart.prototype.prepareData = function() {
+  const self = this;
+  const data = self.store.data.data_stash;
+  let adapted_data;
+  if (self.options.configuration.y_axis)
+    adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
+  else
+    adapted_data = helper.manipulation.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
+
+  treatValues()
+
+  function treatValues() {
+    transform("x_value", self.options.configuration.x_axis.treat_as.value)
+    function transform(k, as) {
+      if (as === "date") {
+        adapted_data.forEach(d => d[k] = new Date(d[k].split(".").reverse().join(".")))  // TODO: treat to date function
+        adapted_data = adapted_data.filter(d => d.x_value.getTime() > 0)
+      }
+    }
+  }
+  console.log(adapted_data)
+  return adapted_data
 }
 
 BasicLineChart.prototype.setupDims = function () {
