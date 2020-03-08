@@ -2,7 +2,7 @@ import LineChart from "../../index.js";
 
 import helper from "../../../../../helper/index.js"
 
-export default function BasicLineChart(cont, options, store) {
+export default function Brush(cont, options, store) {
   const self = this;
 
   self.root_cont = d3.select(cont);
@@ -24,7 +24,7 @@ export default function BasicLineChart(cont, options, store) {
 
 }
 
-BasicLineChart.prototype.setupEventListeners = function() {
+Brush.prototype.setupEventListeners = function() {
   const self = this;
 
   self.store.event.on("all", function () {
@@ -32,23 +32,23 @@ BasicLineChart.prototype.setupEventListeners = function() {
   });
 }
 
-BasicLineChart.prototype.create = function () {
+Brush.prototype.create = function () {
   const self = this;
   LineChart.chart.create(self.main_cont);
 }
 
-BasicLineChart.prototype.redraw = function() {
+Brush.prototype.redraw = function() {
   const self = this;
   const line_data = self.prepareData()
   LineChart.chart.draw(line_data, self.main_cont, self.dim, self.options.configuration)
 }
 
-BasicLineChart.prototype.prepareData = function() {
+Brush.prototype.prepareData = function() {
   const self = this;
   const data = self.store.data.data_stash;
   let adapted_data;
   if (self.options.configuration.y_axis.value === "__frequency") {
-    adapted_data = helper.manipulation.frequency.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
+    adapted_data = helper.manipulation.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
     adapted_data = helper.manipulation.classify.classifiedToXaxisYaxisStructureArray(adapted_data, self.options.configuration.x_axis.value, "frequency");
     adapted_data.sort((a, b) => b.x_value - a.x_value)
   }
@@ -60,17 +60,17 @@ BasicLineChart.prototype.prepareData = function() {
   return adapted_data
 }
 
-BasicLineChart.prototype.setupDims = function () {
+Brush.prototype.setupDims = function () {
   const self = this;
   self.dim = LineChart.chart.setupDims(self.main_cont)
 }
 
-BasicLineChart.prototype.updateElements = function () {
+Brush.prototype.updateElements = function () {
   const self = this;
   LineChart.chart.updateElements(self.main_cont, self.dim)
 }
 
-BasicLineChart.prototype.resize = function () {
+Brush.prototype.resize = function () {
   const self = this;
 
   self.setupDims();
@@ -78,7 +78,7 @@ BasicLineChart.prototype.resize = function () {
   self.redraw()
 }
 
-BasicLineChart.prototype.setupConfiguration = function() {
+Brush.prototype.setupConfiguration = function() {
   const self = this;
   const config_cont = self.main_cont.append("div").style("position", "absolute").style("margin-top", "10px")
 
