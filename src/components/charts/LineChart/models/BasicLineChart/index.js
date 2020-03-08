@@ -2,7 +2,6 @@ import LineChart from "../../index.js";
 
 import helper from "../../../../../helper/index.js"
 
-
 export default function BasicLineChart(cont, options, store) {
   const self = this;
 
@@ -48,23 +47,16 @@ BasicLineChart.prototype.prepareData = function() {
   const self = this;
   const data = self.store.data.data_stash;
   let adapted_data;
-  if (self.options.configuration.y_axis)
-    adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
-  else
+  if (self.options.configuration.y_axis.value === "__frequency") {
     adapted_data = helper.manipulation.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
-
-  treatValues()
-
-  function treatValues() {
-    transform("x_value", self.options.configuration.x_axis.treat_as.value)
-    function transform(k, as) {
-      if (as === "date") {
-        adapted_data.forEach(d => d[k] = new Date(d[k].split(".").reverse().join(".")))  // TODO: treat to date function
-        adapted_data = adapted_data.filter(d => d.x_value.getTime() > 0)
-      }
-    }
+    adapted_data = helper.manipulation.classify.classifiedToXaxisYaxisStructureArray(adapted_data, self.options.configuration.x_axis.value, "frequency");
+    adapted_data.sort((a, b) => b.x_value - a.x_value)
   }
+  else
+    adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
   console.log(adapted_data)
+  adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value)
+
   return adapted_data
 }
 
