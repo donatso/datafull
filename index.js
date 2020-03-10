@@ -12,8 +12,7 @@ import FreeList from "./src/components/elements/FreeList.js"
 import Columns from "./src/components/elements/Columns/index.js"
 import helper from './src/helper/index.js'
 
-
-window.df = {
+const df = {
   Store,
   BasicAreaBrush,
   BasicBarChart,
@@ -27,4 +26,10 @@ window.df = {
   FreeList,
   Columns,
   helper
+}
+
+if (typeof window === 'undefined') {
+  global.df = df;
+} else {
+  window.df = df;
 }

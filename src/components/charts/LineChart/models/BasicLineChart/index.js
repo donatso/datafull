@@ -39,8 +39,29 @@ BasicLineChart.prototype.create = function () {
 
 BasicLineChart.prototype.redraw = function() {
   const self = this;
-  const line_data = self.prepareData()
-  LineChart.chart.draw(line_data, self.main_cont, self.dim, self.options.configuration)
+  const line_data = self.prepareData();
+  const [d3x, d3y] = self.setupAxis(line_data)
+  LineChart.chart.draw(line_data, self.main_cont, self.dim, [d3x, d3y])
+}
+
+BasicLineChart.prototype.setupAxis = function(data) {
+  const self = this;
+
+  return [setupXScale(), setupYScale()]
+
+  function setupXScale() {
+    const axis_config = self.options.configuration.x_axis,
+      axis_key = "x_value",
+      range = [0, self.dim.inner_width]
+    return helper.axis.setupScales(data, axis_config, axis_key, range)
+  }
+
+  function setupYScale() {
+    const axis_config = self.options.configuration.y_axis,
+      axis_key = "y_value",
+      range = [self.dim.inner_height, 0]
+    return helper.axis.setupScales(data, axis_config, axis_key, range)
+  }
 }
 
 BasicLineChart.prototype.prepareData = function() {
@@ -54,7 +75,7 @@ BasicLineChart.prototype.prepareData = function() {
   }
   else
     adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
-  console.log(adapted_data)
+
   adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value)
 
   return adapted_data

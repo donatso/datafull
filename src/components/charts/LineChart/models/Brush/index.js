@@ -15,6 +15,8 @@ export default function Brush(cont, options, store) {
     else return self.root_cont.append("div")
   })();
 
+  self.filterLazyCall = helper.other.lazyCall(self.filterCall.bind(self), 500)
+
   self.setupEventListeners();
   self.setupConfiguration();
 
@@ -30,6 +32,8 @@ Brush.prototype.setupEventListeners = function() {
   self.store.event.on("all", function () {
     self.redraw()
   });
+
+  self.store.filter.add({filter: self.filterDatum()})
 }
 
 Brush.prototype.create = function () {
@@ -41,6 +45,7 @@ Brush.prototype.redraw = function() {
   const self = this;
   const line_data = self.prepareData()
   LineChart.chart.draw(line_data, self.main_cont, self.dim, self.options.configuration)
+  Brush.setupBrush()
 }
 
 Brush.prototype.prepareData = function() {
@@ -54,7 +59,7 @@ Brush.prototype.prepareData = function() {
   }
   else
     adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
-  console.log(adapted_data)
+
   adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value)
 
   return adapted_data
@@ -98,5 +103,40 @@ Brush.prototype.setupConfiguration = function() {
 
     reConfigure();
   })
+
+}
+
+
+Brush.prototype.filterDatum = function () {
+  const self = this;
+  return function (d) {
+    const [from, to, v] = [self.options.configuration.filter.from, self.options.configuration.filter.to, d[self.options.configuration.x_axis.value]]
+    return (from < v && to > v) || (from === v || to === v);
+  }
+}
+
+Brush.prototype.scaleChange = function (domain) {
+  const self = this;
+  self.options.configuration.filter.from = domain[0]
+  self.options.configuration.filter.to = domain[1]
+
+  self.filterLazyCall()
+}
+
+Brush.prototype.filterCall = function () {
+  const self = this;
+  self.store.filter.run()
+  self.store.event.trigger("data_change")
+  self.store.event.trigger("all")
+}
+
+function brushed(d3x, scaleChange) {
+
+  return function () {
+    if (!d3.event.sourceEvent) return;
+    const s = d3.event.selection,
+      domain = s.map(d3x.invert, d3x);
+    scaleChange(domain)
+  }
 
 }

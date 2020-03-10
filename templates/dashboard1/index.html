@@ -133,7 +133,7 @@
 
     const url = "/data/USvideos.tsv",
       data = await df.helper.query.loadData(url);
-    console.log(data)
+
     store.data.insert(data);
 
     store.event.trigger("data_change")
