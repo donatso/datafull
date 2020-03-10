@@ -4,6 +4,7 @@ import time from './time/index.js'
 import validate from './validate/index.js'
 import manipulation from './manipulation/index.js'
 import axis from './axis/index.js'
+import dashboard_templates from './dashboard_templates/index.js'
 import other from './other/index.js'
 
 export default {
@@ -13,5 +14,6 @@ export default {
   validate,
   manipulation,
   axis,
+  dashboard_templates,
   other
 }

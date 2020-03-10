@@ -7,7 +7,13 @@ async function loadData(url) {
   }
   async function fetchData() {
     if (typeof process === "undefined") return fetch(url).then(r => r.text())
-    else return require("fs").readFileSync(url, "utf8")
+    else return require("fs").readFileSync(transformIfFileRequest(url), "utf8")  // for testing todo: better
+
+    function transformIfFileRequest() {
+      if (url.indexOf("http") === -1) return global.APP_ROOT + url
+      else return url
+    }
+
   }
   function getDataType() {
     return url.split(".").reverse()[0]

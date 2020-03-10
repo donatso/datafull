@@ -33,3 +33,5 @@ if (typeof window === 'undefined') {
 } else {
   window.df = df;
 }
+
+export default df;
