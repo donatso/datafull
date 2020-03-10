@@ -1,4 +1,5 @@
 import LineChart from "../../index.js";
+import Brush from "../../../../wrappers/Brush/index.js";
 
 import helper from "../../../../../helper/index.js"
 
@@ -8,12 +9,17 @@ export default function BasicLineChart(cont, options, store) {
   self.root_cont = d3.select(cont);
   self.options = options;
   self.style = self.options.style;
+  self.dim = self.style.dim;
   self.store = store;
 
   self.main_cont = (() => {
-    if (self.options.resizable) return helper.style.Resizable(self.root_cont, self.style.dim, self.resize.bind(self));
+    if (self.options.resizable) return helper.style.Resizable(self.root_cont, self.dim, self.resize.bind(self));
     else return self.root_cont.append("div")
   })();
+
+  self.line_data = null;
+  self.d3x = null;
+  self.d3y = null;
 
   self.setupEventListeners();
   self.setupConfiguration();
@@ -26,10 +32,7 @@ export default function BasicLineChart(cont, options, store) {
 
 BasicLineChart.prototype.setupEventListeners = function() {
   const self = this;
-
-  self.store.event.on("all", function () {
-    self.redraw()
-  });
+  self.store.event.on("all", function () {self.redraw()});
 }
 
 BasicLineChart.prototype.create = function () {
@@ -39,9 +42,9 @@ BasicLineChart.prototype.create = function () {
 
 BasicLineChart.prototype.redraw = function() {
   const self = this;
-  const line_data = self.prepareData();
-  const [d3x, d3y] = self.setupAxis(line_data)
-  LineChart.chart.draw(line_data, self.main_cont, self.dim, [d3x, d3y])
+  self.line_data = self.prepareData();
+  [self.d3x, self.d3y] = self.setupAxis()
+  LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y])
 }
 
 BasicLineChart.prototype.setupAxis = function(data) {
@@ -53,20 +56,20 @@ BasicLineChart.prototype.setupAxis = function(data) {
     const axis_config = self.options.configuration.x_axis,
       axis_key = "x_value",
       range = [0, self.dim.inner_width]
-    return helper.axis.setupScales(data, axis_config, axis_key, range)
+    return helper.axis.setupScales(self.line_data, axis_config, axis_key, range)
   }
 
   function setupYScale() {
     const axis_config = self.options.configuration.y_axis,
       axis_key = "y_value",
       range = [self.dim.inner_height, 0]
-    return helper.axis.setupScales(data, axis_config, axis_key, range)
+    return helper.axis.setupScales(self.line_data, axis_config, axis_key, range)
   }
 }
 
 BasicLineChart.prototype.prepareData = function() {
   const self = this;
-  const data = self.store.data.data_stash;
+  const data = self.store.data.active_data;
   let adapted_data;
   if (self.options.configuration.y_axis.value === "__frequency") {
     adapted_data = helper.manipulation.frequency.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
