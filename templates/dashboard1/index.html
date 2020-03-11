@@ -117,14 +117,16 @@
 
 
         configuration: {
-          x_axis:{value: "dislikes", treat_as: {value: 'number'}},
+          x_axis: {value: "dislikes", treat_as: {value: 'number'}},
+          y_axis:{value: "views", treat_as: {value: 'number'}},
+          type: {value: "total"},
           filter: {from: -Infinity, to: Infinity}
         },
       };
 
       config.style.dim = df.helper.style.posToDim(config.style.pos);
       const cont = dashboard_el.appendChild(document.createElement("div"));
-      const chart = new df.BasicAreaBrush(
+      const chart = new df.LineBrush(
         cont,
         config,
         store
