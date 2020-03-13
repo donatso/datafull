@@ -1,7 +1,5 @@
-import LineChart from "../../index.js";
-import Brush from "../../../../wrappers/Brush/index.js";
-
 import helper from "../../../../../helper/index.js"
+import LineChart from "../../index.js";
 
 export default function BasicLineChart(cont, options, store) {
   const self = this;

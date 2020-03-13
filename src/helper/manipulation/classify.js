@@ -11,12 +11,39 @@ const arrayOfValuesToValueCalculations = {
   }
 }
 
+function classifyData3(classified, x_key, y_key) {
+  const reduced_data = {}
+  Object.keys(classified).forEach(cls => {
+    reduced_data[cls] = classified[cls].map(d => ({x_key, y_key, "x_value": d[x_key], "y_value": d[y_key]}))
+  })
+
+  return reduced_data
+}
+
 
 function classifyData(data, x_key, y_key, x_axis_treat_as) {
   let classified;
-  if (x_axis_treat_as.value === "list") classified = classifyDataWithXaxisAsList()
+  if (Array.isArray(x_key)) classified = classifyWithMultiKey(data, x_key)
+  else if (x_axis_treat_as.value === "list") classified = classifyDataWithXaxisAsList()
   else classified = classify(data, x_key)
   return classified
+
+  function classify(data, key) {
+    const classDict = {}
+    data.forEach(d => pushToObjectKey(classDict, d[key], d))
+    return classDict
+  }
+
+  function pushToObjectKey(dct, k, v) {
+    if (!dct.hasOwnProperty(k)) dct[k] = []
+    dct[k].push(v)
+  }
+
+  function classifyWithMultiKey(data, keys) {
+    const classDict = {}
+    data.forEach(d => pushToObjectKey(classDict, keys.map(k => d[k]).join("\t"), d))  // todo: better separator?
+    return classDict
+  }
 
   function classifyDataWithXaxisAsList() {
     let classified = classify(data, x_key)
@@ -41,17 +68,6 @@ function classifyData(data, x_key, y_key, x_axis_treat_as) {
         return str.split(separator)
       }
     }
-  }
-
-  function classify(data, key) {
-    const classDict = {}
-    data.forEach(d => pushToObjectKey(classDict, d[key], d))
-    return classDict
-  }
-
-  function pushToObjectKey(dct, k, v) {
-    if (!dct.hasOwnProperty(k)) dct[k] = []
-    dct[k].push(v)
   }
 }
 
@@ -79,6 +95,7 @@ function classifiedToXaxisYaxisStructureArray(obj, x_key, y_key) {
 export default {
   arrayOfValuesToValueCalculations,
   classifyData,
+  classifyData3,
   classifiedDatumsToValue,
   classifiedToXaxisYaxisStructureArray
 }
