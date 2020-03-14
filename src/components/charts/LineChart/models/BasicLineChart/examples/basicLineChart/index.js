@@ -9,7 +9,7 @@ export default function() {
       style: { pos: [0.02, 0.7, 0.7, 0.02] },
       resizable: true,
       configuration: {
-        x_axis: {value: "trending_date", treat_as: {value: 'date'}},
+        x_axis: {value: "trending_date", treat_as: {value: 'date', time_format: "%y.%d.%m"}},
         y_axis: {value: "views", treat_as: {value: 'number'}},
         type: {value: "total"}
       },

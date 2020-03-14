@@ -77,7 +77,7 @@ BasicLineChart.prototype.prepareData = function() {
   else
     adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
 
-  adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value)
+  adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value, self.options.configuration.x_axis.treat_as)
 
   return adapted_data
 }
