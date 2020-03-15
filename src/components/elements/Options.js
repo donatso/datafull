@@ -47,7 +47,7 @@ Options.prototype.createOptionNodes = function (cont) {
     node.innerText = d.value;
     node.setAttribute("class", 'treat_as_option')
     node.addEventListener("click", clicked)
-    if (d.hasOwnProperty("input")) addInput(node)
+    if (d.hasOwnProperty("input")) addInput(node)  // todo
     if (self.config.value && (self.config.value === d.value)) markSelectedValue(d)
 
     node.style.cursor = 'pointer'

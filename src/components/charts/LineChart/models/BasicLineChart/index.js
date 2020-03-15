@@ -45,8 +45,9 @@ BasicLineChart.prototype.redraw = function() {
   LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y])
 }
 
-BasicLineChart.prototype.setupAxis = function(data) {
+BasicLineChart.prototype.setupAxis = function() {
   const self = this;
+  const data_merged = d3.merge(Object.values(self.line_data))
 
   return [setupXScale(), setupYScale()]
 
@@ -54,14 +55,14 @@ BasicLineChart.prototype.setupAxis = function(data) {
     const axis_config = self.options.configuration.x_axis,
       axis_key = "x_value",
       range = [0, self.dim.inner_width]
-    return helper.axis.setupScales(self.line_data, axis_config, axis_key, range)
+    return helper.axis.setupScales(data_merged, axis_config, axis_key, range)
   }
 
   function setupYScale() {
     const axis_config = self.options.configuration.y_axis,
       axis_key = "y_value",
       range = [self.dim.inner_height, 0]
-    return helper.axis.setupScales(self.line_data, axis_config, axis_key, range)
+    return helper.axis.setupScales(data_merged, axis_config, axis_key, range)
   }
 }
 
@@ -76,8 +77,6 @@ BasicLineChart.prototype.prepareData = function() {
   }
   else
     adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
-
-  adapted_data = helper.manipulation.treatValues(adapted_data, "x_value", self.options.configuration.x_axis.treat_as.value, self.options.configuration.x_axis.treat_as)
 
   return adapted_data
 }

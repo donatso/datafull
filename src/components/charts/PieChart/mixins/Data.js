@@ -29,7 +29,7 @@ function structureData(data, x_key, y_key, x_axis_treat_as) {
     console.log(key)
     const classDict = {}
     data.forEach(d => {
-      if (x_axis_treat_as.value === "list") strToList(d[key], x_axis_treat_as.input.value).forEach(cls => push(cls, d))
+      if (x_axis_treat_as.value === "list") strToList(d[key], x_axis_treat_as.separator).forEach(cls => push(cls, d))
       else push(d[key], d)
     })
     return classDict

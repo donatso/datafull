@@ -35,9 +35,13 @@ function draw(data, cont, dim, [d3x, d3y]) {
 
   main_g.html("")
   drawAxis()
-  drawLine()
 
-  function drawLine() {
+  for (let k in data) {
+    if (!data.hasOwnProperty(k)) continue
+    drawLine(data[k])
+  }
+
+  function drawLine(data) {
     const line = d3.line()
       .curve(d3.curveMonotoneX)
       .x(d => d3x(d.x_value))
