@@ -2,7 +2,7 @@ import Store from "./src/Store/index.js";
 import BasicBarChart from "./src/components/charts/BarChart/models/BasicBarChart/index.js"
 import StackBarChart from "./src/components/charts/BarChart/models/StackBarChart/index.js"
 import BasicPieChart from "./src/components/charts/PieChart/models/BasicPieChart/index.js"
-import BasicLineChart from "./src/components/charts/LineChart/models/BasicLineChart/index.js"
+import MultiLineChart from "./src/components/charts/LineChart/model/MultiLineChart/index.js"
 import ParcelMap from "./src/components/charts/MapChart/models/ParcelMap/index.js"
 import LineBrush from "./src/components/wrappers/Brush/models/LineBrush/index.js"
 import TabsView from "./src/components/elements/TabsView.js"
@@ -17,7 +17,7 @@ const df = {
   BasicBarChart,
   StackBarChart,
   BasicPieChart,
-  BasicLineChart,
+  MultiLineChart,
   ParcelMap,
   LineBrush,
   TabsView,

@@ -1,10 +1,10 @@
 import helper from "../../../../../../../helper/index.js";
-import BasicLineChart from "../../index.js";
+import MultiLineChart from "../../index.js"
 
 export default function() {
   return helper.dashboard_templates.basic({
     data_url: "/data/covid_19_data.csv",
-    chartModel: BasicLineChart,
+    chartModel: MultiLineChart,
     options: {
       style: { pos: [0.02, 0.7, 0.7, 0.02] },
       resizable: true,

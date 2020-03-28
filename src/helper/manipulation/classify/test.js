@@ -1,10 +1,4 @@
-global.d3 = Object.assign(
-  {},
-  require("../../../../offline_plugins/d3"),
-  require("../../../../offline_plugins/d3-array")
-  )
-
-global._ = require("../../../../offline_plugins/lodash")
+require(process.cwd() + '/offline_plugins')
 
 import helper from '../../../helper/index.js'
 import classify from './'
