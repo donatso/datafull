@@ -43,7 +43,7 @@ describe("corona data test", () => {
   test('multi class multi node with d3 group', async function () {
     let data = await helper.query.loadData('/data/covid_19_data.csv');
     const dim3 = d => d["Province/State"] + "\t" + d["Country/Region"];
-    const dim2 = d => d["ObservationDate"]
+    const dim2 = "ObservationDate"
 
     const classified3 = classify.group(data, dim3, dim2)
     console.log(classified3['Anhui\tMainland China'])

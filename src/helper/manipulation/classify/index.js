@@ -97,12 +97,17 @@ function group(data, ...class_getters) {
 
   function loop(data, i) {
     if (!(i < class_getters.length)) return data
-    const grouped = classify(data, class_getters[i])
+    const grouped = classify(data, fromKeyToGetter(class_getters[i]))
     for (let k in grouped) {
       if (!grouped.hasOwnProperty(k)) continue
       grouped[k] = loop(grouped[k], i+1)
     }
     return grouped
+  }
+
+  function fromKeyToGetter(maybeKey) {
+    if (typeof maybeKey === "string") return d => d[maybeKey]
+    else return maybeKey
   }
 
   function classify(data, classGetter) {
@@ -115,6 +120,10 @@ function group(data, ...class_getters) {
     if (!dct.hasOwnProperty(k)) dct[k] = []
     dct[k].push(v)
   }
+}
+
+function nestedObjectToArray(obj) {
+
 }
 
 export default {

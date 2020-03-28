@@ -9,10 +9,10 @@ export default function() {
       style: { pos: [0.02, 0.7, 0.7, 0.02] },
       resizable: true,
       configuration: {
-        cls: {value: null, treat_as: {value: "string"}},
-        x_axis: {value: "ObservationDate", treat_as: {value: 'date'}},
-        y_axis: {value: "Deaths", treat_as: {value: 'number'}},
-        type: {value: "total"}
+        cls: {getter: d => d["Province/State"] + "\t" + d["Country/Region"], type: "string"},
+        x_axis: {getter: "ObservationDate", type: "date"},
+        y_axis: {getter: "Deaths", type: "number"},
+        type: "total"
       },
     }
   });

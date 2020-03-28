@@ -29,7 +29,7 @@ function updateElements(cont, dim) {
   main_g.attr("transform", "translate(" + dim.ml + "," + dim.mt + ")");
 }
 
-function draw(data, cont, dim, [d3x, d3y]) {
+function draw(data, cont, dim, [d3x, d3y], [xValue, yValue]) {
   const svg = cont.select("svg.chart"),
     main_g = svg.select("g.main_g")
 
@@ -44,8 +44,8 @@ function draw(data, cont, dim, [d3x, d3y]) {
   function drawLine(data) {
     const line = d3.line()
       .curve(d3.curveMonotoneX)
-      .x(d => d3x(d.x_value))
-      .y(d => d3y(d.y_value));
+      .x(d3x(xValue))
+      .y(d3y(yValue));
 
     main_g.append("path")
       .attr("class", "line")

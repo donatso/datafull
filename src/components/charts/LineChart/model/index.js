@@ -1,7 +1,7 @@
-import helper from "../../../../../helper/index.js"
-import LineChart from "../../index.js";
+import helper from "../../../../helper/index.js"
+import LineChart from "../index.js";
 
-export default function BasicLineChart(cont, options, store) {
+export default function LineChartModel(cont, options, store) {
   const self = this;
 
   self.root_cont = d3.select(cont);
@@ -19,6 +19,9 @@ export default function BasicLineChart(cont, options, store) {
   self.d3x = null;
   self.d3y = null;
 
+  self.xGetter = null;
+  self.yGetter = null;
+
   self.setupEventListeners();
   self.setupConfiguration();
 
@@ -28,70 +31,71 @@ export default function BasicLineChart(cont, options, store) {
 
 }
 
-BasicLineChart.prototype.setupEventListeners = function() {
-  const self = this;
-  self.store.event.on("all", function () {self.redraw()});
-}
-
-BasicLineChart.prototype.create = function () {
+LineChartModel.prototype.create = function () {
   const self = this;
   LineChart.chart.create(self.main_cont);
 }
 
-BasicLineChart.prototype.redraw = function() {
+LineChartModel.prototype.redraw = function() {
   const self = this;
   self.line_data = self.prepareData();
-  [self.d3x, self.d3y] = self.setupAxis()
-  LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y])
+  [self.d3x, self.d3y] = self.setupAxis();
+  [self.xGetter, self.yGetter] = self.setupGetters();
+  LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y], [self.xGetter, self.yGetter])
 }
 
-BasicLineChart.prototype.setupAxis = function() {
+LineChartModel.prototype.setupAxis = function() {
   const self = this;
-  const data_merged = d3.merge(Object.values(self.line_data))
+  const data = self.store.active_data;
 
   return [setupXScale(), setupYScale()]
 
   function setupXScale() {
     const axis_config = self.options.configuration.x_axis,
-      axis_key = "x_value",
       range = [0, self.dim.inner_width]
-    return helper.axis.setupScales(data_merged, axis_config, axis_key, range)
+    return helper.axis.setupScales(data, axis_config, self.xGetter, range)
   }
 
   function setupYScale() {
     const axis_config = self.options.configuration.y_axis,
-      axis_key = "y_value",
       range = [self.dim.inner_height, 0]
-    return helper.axis.setupScales(data_merged, axis_config, axis_key, range)
+    return helper.axis.setupScales(data, axis_config, self.yGetter, range)
   }
 }
 
-BasicLineChart.prototype.prepareData = function() {
+LineChartModel.prototype.setupGetters = function() {
+  const self = this;
+
+  return [
+    fromKeyToGetter(self.options.configuration.x_axis.getter),
+    fromKeyToGetter(self.options.configuration.y_axis.getter)
+  ]
+
+  function fromKeyToGetter(maybeKey) {
+    if (typeof maybeKey === "string") return d => d[maybeKey]
+    else return maybeKey
+  }
+
+}
+
+LineChartModel.prototype.prepareData = function() {
   const self = this;
   const data = self.store.data.active_data;
-  let adapted_data;
-  if (self.options.configuration.y_axis.value === "__frequency") {
-    adapted_data = helper.manipulation.frequency.createFrequencyData(data, self.options.configuration.x_axis.value, self.options)
-    adapted_data = helper.manipulation.classify.classifiedToXaxisYaxisStructureArray(adapted_data, self.options.configuration.x_axis.value, "frequency");
-    adapted_data.sort((a, b) => b.x_value - a.x_value)
-  }
-  else
-    adapted_data = LineChart.data.setupLineData(data, self.options.configuration)
 
-  return adapted_data
+  return LineChart.data.setupLineData(data, self.options.configuration)
 }
 
-BasicLineChart.prototype.setupDims = function () {
+LineChartModel.prototype.setupDims = function () {
   const self = this;
   self.dim = LineChart.chart.setupDims(self.main_cont)
 }
 
-BasicLineChart.prototype.updateElements = function () {
+LineChartModel.prototype.updateElements = function () {
   const self = this;
   LineChart.chart.updateElements(self.main_cont, self.dim)
 }
 
-BasicLineChart.prototype.resize = function () {
+LineChartModel.prototype.resize = function () {
   const self = this;
 
   self.setupDims();
@@ -99,7 +103,12 @@ BasicLineChart.prototype.resize = function () {
   self.redraw()
 }
 
-BasicLineChart.prototype.setupConfiguration = function() {
+LineChartModel.prototype.setupEventListeners = function() {
+  const self = this;
+  self.store.event.on("all", function () {self.redraw()});
+}
+
+LineChartModel.prototype.setupConfiguration = function() {
   const self = this;
   const config_cont = self.main_cont.append("div").style("position", "absolute").style("margin-top", "10px")
 
