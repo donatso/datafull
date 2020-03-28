@@ -21,11 +21,11 @@ function classifyData3(classified, x_key, y_key) {
 }
 
 
-function classifyData(data, x_key, y_key, x_axis_treat_as) {
+function classifyData(data, key, treat_as) {
   let classified;
-  if (Array.isArray(x_key)) classified = classifyWithMultiKey(data, x_key)
-  else if (x_axis_treat_as.value === "list") classified = classifyDataWithXaxisAsList()
-  else classified = classify(data, x_key)
+  if (Array.isArray(key)) classified = classifyWithMultiKey(data, key)
+  else if (treat_as.value === "list") classified = classifyDataWithXaxisAsList()
+  else classified = classify(data, key)
   return classified
 
   function classify(data, key) {
@@ -46,14 +46,14 @@ function classifyData(data, x_key, y_key, x_axis_treat_as) {
   }
 
   function classifyDataWithXaxisAsList() {
-    let classified = classify(data, x_key)
+    let classified = classify(data, key)
     return extendClassDict()
 
     function extendClassDict() {
       const extendedClassDict = {};
       for (let cls in classified) {
         if (!classified.hasOwnProperty(cls)) continue
-        const class_list = strToList(cls, x_axis_treat_as.input.value);
+        const class_list = strToList(cls, treat_as.separator);
         const values = classified[cls];
         values.forEach(v =>
           class_list.forEach(cls =>
@@ -92,10 +92,36 @@ function classifiedToXaxisYaxisStructureArray(obj, x_key, y_key) {
     }))
 }
 
+function group(data, ...class_getters) {
+  return loop(data, 0)
+
+  function loop(data, i) {
+    if (!(i < class_getters.length)) return data
+    const grouped = classify(data, class_getters[i])
+    for (let k in grouped) {
+      if (!grouped.hasOwnProperty(k)) continue
+      grouped[k] = loop(grouped[k], i+1)
+    }
+    return grouped
+  }
+
+  function classify(data, classGetter) {
+    const classDict = {}
+    data.forEach(d => pushToObjectKey(classDict, classGetter(d), d))
+    return classDict
+  }
+
+  function pushToObjectKey(dct, k, v) {
+    if (!dct.hasOwnProperty(k)) dct[k] = []
+    dct[k].push(v)
+  }
+}
+
 export default {
   arrayOfValuesToValueCalculations,
   classifyData,
   classifyData3,
   classifiedDatumsToValue,
-  classifiedToXaxisYaxisStructureArray
+  classifiedToXaxisYaxisStructureArray,
+  group
 }

@@ -1,8 +1,13 @@
-global.d3 = require("../../../offline_plugins/d3")
-global._ = require("../../../offline_plugins/lodash")
+global.d3 = Object.assign(
+  {},
+  require("../../../../offline_plugins/d3"),
+  require("../../../../offline_plugins/d3-array")
+  )
 
-import helper from '../../helper/index.js'
-import classify from './classify.js'
+global._ = require("../../../../offline_plugins/lodash")
+
+import helper from '../../../helper/index.js'
+import classify from './'
 
 describe("basic classify test", () => {
   let data = [
@@ -23,17 +28,25 @@ describe("basic classify test", () => {
   });
   test('multi class', () => {
     let classified = classify.classifyData(data, ["cls", "cls2"],"value", {value: 'string'})
-    console.log(classified)
+    // console.log(classified)
   });
 });
 
 describe("corona data test", () => {
   test('multi class multi node', async function () {
     let data = await helper.query.loadData('/data/covid_19_data.csv')
-    let classified = classify.classifyData(data, ["Province/State", "Country/Region"],"Deaths", {value: 'string'})
+    let classified = classify.classifyData(data, ["Province/State", "Country/Region"], {value: 'string'})
     let classified3 = classify.classifyData3(classified, "ObservationDate", "Confirmed")
-    console.log(JSON.stringify(classified3, null, 2))
 
+  });
+
+  test('multi class multi node with d3 group', async function () {
+    let data = await helper.query.loadData('/data/covid_19_data.csv');
+    const dim3 = d => d["Province/State"] + "\t" + d["Country/Region"];
+    const dim2 = d => d["ObservationDate"]
+
+    const classified3 = classify.group(data, dim3, dim2)
+    console.log(classified3['Anhui\tMainland China'])
   });
 })
 

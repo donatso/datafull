@@ -9,10 +9,8 @@ function treatValues(data, k, as, opt) {
 
 function treatDate(data, k, time_format, opt) {
   const timeParse = time_format ? d3.timeParse(time_format) : (t) => new Date(t)
-  data.forEach(d => {
-    d[k] = timeParse(d[k])
-  })
-  data = data.filter(d => d[k])
+  data.forEach(d => d[k] = timeParse(d[k]))
+  data = data.filter(d => d[k])  //todo: how else to treat not-a-date ?
   return data
 }
 
