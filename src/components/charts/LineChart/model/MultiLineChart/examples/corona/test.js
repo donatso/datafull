@@ -1,6 +1,5 @@
-global.d3 = require(global.APP_ROOT+"/offline_plugins/d3");
-global._ = require(global.APP_ROOT+"/offline_plugins/lodash");
-require(global.APP_ROOT)
+require(process.cwd() + "/offline_plugins");
+require(process.cwd())
 
 import example from './index.js'
 

@@ -1,5 +1,5 @@
 function setupScales(data, axis_config, axis_key, range) {
-  const scale_type = getScale(axis_config.treat_as.value),
+  const scale_type = getScale(axis_config.type),
     scale_domain = getScaleDomain(scale_type)
 
   return d3[scale_type]()

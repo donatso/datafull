@@ -40,49 +40,47 @@ LineChartModel.prototype.redraw = function() {
   const self = this;
   self.line_data = self.prepareData();
   [self.d3x, self.d3y] = self.setupAxis();
-  [self.xGetter, self.yGetter] = self.setupGetters();
-  LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y], [self.xGetter, self.yGetter])
+  const [xValue, yValue] = [d => d.x_value, d => d.y_value]
+  LineChart.chart.draw(self.line_data, self.main_cont, self.dim, [self.d3x, self.d3y], [xValue, yValue])
 }
 
 LineChartModel.prototype.setupAxis = function() {
   const self = this;
-  const data = self.store.active_data;
-
+  let data = self.line_data;
+  if (!Array.isArray(data)) data = d3.merge(Object.values(data))
   return [setupXScale(), setupYScale()]
 
   function setupXScale() {
     const axis_config = self.options.configuration.x_axis,
       range = [0, self.dim.inner_width]
-    return helper.axis.setupScales(data, axis_config, self.xGetter, range)
+    return helper.axis.setupScales(data, axis_config, "x_value", range)
   }
 
   function setupYScale() {
     const axis_config = self.options.configuration.y_axis,
       range = [self.dim.inner_height, 0]
-    return helper.axis.setupScales(data, axis_config, self.yGetter, range)
+    return helper.axis.setupScales(data, axis_config, "y_value", range)
   }
 }
 
 LineChartModel.prototype.setupGetters = function() {
   const self = this;
-
-  return [
-    fromKeyToGetter(self.options.configuration.x_axis.getter),
-    fromKeyToGetter(self.options.configuration.y_axis.getter)
-  ]
+  if (self.options.configuration.hasOwnProperty("cls"))
+    self.options.configuration.cls.getter = fromKeyToGetter(self.options.configuration.cls.getter)
+  self.options.configuration.x_axis.getter = fromKeyToGetter(self.options.configuration.x_axis.getter)
+  self.options.configuration.y_axis.getter = fromKeyToGetter(self.options.configuration.y_axis.getter)
 
   function fromKeyToGetter(maybeKey) {
     if (typeof maybeKey === "string") return d => d[maybeKey]
     else return maybeKey
   }
-
 }
 
 LineChartModel.prototype.prepareData = function() {
   const self = this;
   const data = self.store.data.active_data;
 
-  return LineChart.data.setupLineData(data, self.options.configuration)
+  return LineChart.data.setupOneLineData(data, self.options.configuration)
 }
 
 LineChartModel.prototype.setupDims = function () {
@@ -110,6 +108,9 @@ LineChartModel.prototype.setupEventListeners = function() {
 
 LineChartModel.prototype.setupConfiguration = function() {
   const self = this;
+
+  self.setupGetters();
+
   const config_cont = self.main_cont.append("div").style("position", "absolute").style("margin-top", "10px")
 
   self.options.configuration = _.defaultsDeep(self.options.configuration, {

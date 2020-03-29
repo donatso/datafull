@@ -32,7 +32,6 @@ function updateElements(cont, dim) {
 function draw(data, cont, dim, [d3x, d3y], [xValue, yValue]) {
   const svg = cont.select("svg.chart"),
     main_g = svg.select("g.main_g")
-
   main_g.html("")
   drawAxis()
 
@@ -44,8 +43,8 @@ function draw(data, cont, dim, [d3x, d3y], [xValue, yValue]) {
   function drawLine(data) {
     const line = d3.line()
       .curve(d3.curveMonotoneX)
-      .x(d3x(xValue))
-      .y(d3y(yValue));
+      .x(d => d3x(xValue(d)))
+      .y(d => d3y(yValue(d)));
 
     main_g.append("path")
       .attr("class", "line")

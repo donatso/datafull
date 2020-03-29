@@ -1,7 +1,35 @@
 import helper from "../../../../helper/index.js"
 
 function setupLineData(data, configuration) {
-  return helper.manipulation.classify.group(data, configuration.cls.getter, configuration.x_axis.getter)
+  const grouped = helper.manipulation.classify.group(data, configuration.cls.getter, configuration.x_axis.getter)
+  for (let cls in grouped) {
+    if (!grouped.hasOwnProperty(cls)) continue
+    grouped[cls] = "penis"
+  }
+}
+
+function setupOneLineData(data, configuration) {
+  const grouped = helper.manipulation.classify.group(data, configuration.x_axis.getter)
+  const data_struct = []
+  for (let k in grouped) {
+    if (!grouped.hasOwnProperty(k)) continue
+    data_struct.push({
+      x_value: k,
+      y_value: helper.manipulation.classify.dataToValueCalculations[configuration.type](grouped[k], configuration.y_axis.getter)
+    })
+  }
+  helper.manipulation.treatValues(data_struct, "x_value", configuration.x_axis.type, configuration.x_axis)
+  helper.manipulation.treatValues(data_struct, "y_value", configuration.y_axis.type)
+  return data_struct
+}
+
+function setupMultiLineData(data, configuration) {
+  const grouped = helper.manipulation.classify.group(data, configuration.cls.getter)
+  for (let cls in grouped) {
+    if (!grouped.hasOwnProperty(cls)) continue
+    grouped[cls] = setupOneLineData(grouped[cls], configuration)
+  }
+  return grouped
 }
 
 function setupFrequencyData(data, configuration) {
@@ -13,5 +41,7 @@ function setupFrequencyData(data, configuration) {
 
 export default {
   setupLineData,
-  setupFrequencyData
+  setupFrequencyData,
+  setupOneLineData,
+  setupMultiLineData
 }

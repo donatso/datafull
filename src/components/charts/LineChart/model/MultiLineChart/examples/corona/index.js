@@ -10,7 +10,7 @@ export default function() {
       resizable: true,
       configuration: {
         cls: {getter: d => d["Province/State"] + "\t" + d["Country/Region"], type: "string"},
-        x_axis: {getter: "ObservationDate", type: "date"},
+        x_axis: {getter: "ObservationDate", type: "date", time_format: "%m/%d/%Y"},
         y_axis: {getter: "Deaths", type: "number"},
         type: "total"
       },

@@ -10,7 +10,7 @@ async function loadData(url) {
     else return require("fs").readFileSync(transformIfFileRequest(url), "utf8")  // for testing todo: better
 
     function transformIfFileRequest() {
-      if (url.indexOf("http") === -1) return global.APP_ROOT + url
+      if (url.indexOf("http") === -1) return require("path").join(__dirname, "../../.." + url)
       else return url
     }
 

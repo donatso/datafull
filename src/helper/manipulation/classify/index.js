@@ -11,6 +11,20 @@ const arrayOfValuesToValueCalculations = {
   }
 }
 
+const dataToValueCalculations = {
+  count: function (data, getter) {
+    return data.filter(d => getter(d) !== null).length;
+  },
+  total: function (data, getter) {
+    return _.sum(data.map(getter))
+  },
+  medium: function (data, getter) {
+    const non_null_values = data.filter(d => getter(d) !== null);
+    return _.sum(non_null_values.map(getter)) / non_null_values.length;
+  }
+}
+
+
 function classifyData3(classified, x_key, y_key) {
   const reduced_data = {}
   Object.keys(classified).forEach(cls => {
@@ -122,12 +136,9 @@ function group(data, ...class_getters) {
   }
 }
 
-function nestedObjectToArray(obj) {
-
-}
-
 export default {
   arrayOfValuesToValueCalculations,
+  dataToValueCalculations,
   classifyData,
   classifyData3,
   classifiedDatumsToValue,
