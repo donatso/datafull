@@ -1,43 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>templates</title>
 
-</head>
-<body>
-<div>
-    <h2>Templates</h2>
-    <div id="album"></div>
-</div>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
+      #album {
+        max-width: 900px;
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h2>Templates</h2>
+      <div id="album"></div>
+    </div>
 
-<script type="module">
-  const album = document.body.querySelector("#album")
-  album.style.padding = "40px";
-  album.style.backgroundColor = "lightgrey";
-  album.style.minHeight = "70vh";
+    <script type="module">
+      const album = document.body.querySelector("#album");
 
-  const templates = ["/templates/barchart-brush", "/templates/dashboard1"];
+      const templates = [
+        "/src/isolated_charts/CircleAbsorber",
+        "/src/isolated_charts/BarChart",
+        "/src/isolated_charts/BarChart",
+        "/src/isolated_charts/CircleAbsorber"
+      ];
 
-  for (let i = 0; i < templates.length; i++) {
-    const template = templates[i]
-    const node = album.appendChild(document.createElement("div"))
-    node.style.display = 'inline-block'
-    node.style.width = '300px'
-    node.style.margin = '10px'
-    node.style.cursor = "pointer"
-    node.addEventListener("click", function () {
-        window.location = template
-    })
+      for (let i = 0; i < templates.length; i++) {
+        const template = templates[i];
+        const node = album.appendChild(document.createElement("div"));
+        node.style.display = "inline-block";
+        node.style.width = "50%";
+        node.style.padding = "10px";
+        node.style.cursor = "pointer";
+        node.addEventListener("click", function() {
+          window.location = template;
+        });
 
-    const img = node.appendChild(document.createElement("img"))
-    img.style.width = "100%"
-    img.src = template + "/logo.png"
-    img.alt = template
-  }
-
-
-</script>
-</body>
+        const img = node.appendChild(document.createElement("img"));
+        img.style.width = "100%";
+        img.src = template + "/logo.jpg";
+        img.alt = template;
+      }
+    </script>
+  </body>
 </html>
