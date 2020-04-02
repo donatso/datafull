@@ -70,14 +70,13 @@ CircleAbsorber.prototype.run = function () {
   const self = this;
   const circleAnimationModel = new CircleAnimationModel();
   circleAnimationModel.initial(self.dim, 2000, 2000)
-  const timer = d3.timer((t) => {
-    if (!self.running) timer.stop();
-
+  const tick = t => {
+    if (!self.running) self.timer.stop()
     circleAnimationModel.update(t, self.data, self.getTargetMousePos.bind(self));
     self.context.clearRect(0, 0, self.dim.width, self.dim.height);
     circleAnimationModel.draw(t, self.context)
-
-  });
+  }
+  self.timer = d3.timer(tick, 0, 5000);
 }
 
 CircleAbsorber.prototype.getTargetMousePos = function() {

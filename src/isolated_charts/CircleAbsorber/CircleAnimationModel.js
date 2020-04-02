@@ -37,7 +37,7 @@ CircleAnimationModel.prototype.circlesEnter = function(datum, iter) {
   for (let i = 0; i < datum.values.length; i++) {
     const d = datum.values[i];
     for (let j = 0; j < d.diff; j++) {
-      const node_id = Math.random() + "_" + i + "_" + j;
+      const node_id = Math.random();
       const trans = {
         t:iter*self.interval_time,
         tt: self.transition_time,
