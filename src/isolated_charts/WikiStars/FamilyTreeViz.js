@@ -200,7 +200,7 @@ class FamilyTreeViz {
             .style("width", 15+"px")
             .style("height", 15+"px")
             .style("border", "white solid 2.5px")
-            .style("border-radius", 7.5+"px")
+            .style("border-radius", "50%")
             .style("background-color", "rgb(255,230,200)")
         } else {
           selection
@@ -209,7 +209,7 @@ class FamilyTreeViz {
             .style("width", 10+"px")
             .style("height", 10+"px")
             .style("border", "black solid 0px")
-            .style("border-radius", 5+"px")
+            .style("border-radius", "50%")
             .style("background-color", "#fff")
         }
       })
@@ -276,7 +276,7 @@ class FamilyTreeViz {
             .style("width", 15+"px")
             .style("height", 15+"px")
             .style("border", "white solid 2.5px")
-            .style("border-radius", 7.5+"px")
+            .style("border-radius", "50%")
             .style("background-color", "rgb(255,230,200)")
         } else {
           selection
@@ -287,7 +287,7 @@ class FamilyTreeViz {
             .style("width", 10+"px")
             .style("height", 10+"px")
             .style("border", "black solid 0px")
-            .style("border-radius", 5+"px")
+            .style("border-radius", "50%")
             .style("background-color", "#fff")
         }
       })
