@@ -2,7 +2,6 @@ export default function CircleAnimationModel () {
   const self = this;
 
   self.nodes = {};
-  self.initialized = false;
 }
 
 
@@ -15,18 +14,21 @@ export default function CircleAnimationModel () {
     self.bash = transition_time / interval_time;
   }
 
-CircleAnimationModel.calculateDiff = function(data) {
+CircleAnimationModel.calculateDiff = function(data, getValues, getValue) {
 
   for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].values.length; j++) {
-      const d = data[i].values[j];
-      d.diff = d.value - getLastValue(i,j);
+    const values = getValues(data[i]);
+    for (let j = 0; j < values.length; j++) {
+      const d = values[j]
+      const value = getValue(d)
+      d.diff = value - getLastValue(i,j);
     }
   }
 
   function getLastValue(i,j) {
-    if (i === 0) return 0
-    return data[i-1].values[j].value
+    if (i === 0) return 0;
+    const values = getValues(data[i-1]);
+    return getValue(values[j]);
   }
 
 }

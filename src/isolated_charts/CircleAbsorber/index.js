@@ -3,16 +3,32 @@ import CircleAnimationModel from "./CircleAnimationModel.js"
 export default function CircleAbsorber(cont) {
   const self = this;
 
-  self.createElements(cont);
-  self.prepareData();
+  self.dom = {};
+  self.dom.cont = d3.select(cont);
+  self.timer = null;
+  self.last_timer_elapsed = 0;
+  self.timer_elapsed = 0;
+  self.running = false;
+  self.circleAnimationModel = new CircleAnimationModel()
+
+  self.initial();
 }
 
-CircleAbsorber.prototype.createElements = function (cont) {
+CircleAbsorber.prototype.initial = function () {
   const self = this;
 
-  self.dom = {}
-  self.dom.cont = d3.select(cont);
-  self.dom.start_btn = self.dom.cont.append("button").attr("class", "start").html("start").on("click", self.start.bind(self))
+  self.createElements();
+  self.data = CircleAbsorber.prepareInventedData()
+  self.circleAnimationModel.initial(self.dim, 2000, 2000);
+
+  self.timer = d3.timer(self.tick.bind(self));
+  if (!self.running) self.stop()
+}
+
+CircleAbsorber.prototype.createElements = function () {
+  const self = this;
+
+  self.dom.start_btn = self.dom.cont.append("button").attr("class", "start").html("start").on("click", self.runToggle.bind(self))
   self.dom.canvas = self.dom.cont.append("canvas")
 
   self.dim = {width: window.innerWidth, height: window.innerHeight}
@@ -30,53 +46,50 @@ CircleAbsorber.prototype.createElements = function (cont) {
     self.dom.start_btn.node().style[k] = v;
   })
 
-  self.dom.canvas.attr("width", self.dim.width).attr("height", self.dim.height)
+  self.dom.canvas.attr("width", self.dim.width-5).attr("height", self.dim.height-5)
   self.context = self.dom.canvas.node().getContext('2d');
 }
 
-CircleAbsorber.prototype.prepareData = function () {
-  const self = this;
+CircleAbsorber.inventData = function (data_len, values_len, diff_random) {
+  const data = [],
+    d3_color = d3.scaleOrdinal().range(d3.schemeSet3)
 
-  self.data = inventData(1000, 10);
-  CircleAnimationModel.calculateDiff(self.data)
-  console.log(self.data)
+  for (let i = 0; i < data_len; i++) {
+    const datum = {values: []};
+    data.push(datum)
+    for (let j = 0; j < values_len; j++) {
+      let last_value = getLastValue(i,j),
+        value = last_value + Math.floor(Math.random()*diff_random);
 
-  function inventData(i_len, j_len) {
-    const data = [],
-      d3_color = d3.scaleOrdinal().range(d3.schemeSet3)
-
-    for (let i = 0; i < i_len; i++) {
-      const datum = {values: []};
-      data.push(datum)
-      for (let j = 0; j < j_len; j++) {
-        let last_value = getLastValue(i,j),
-          value = last_value + 1 * Math.floor(Math.random()*100),
-          diff = value - last_value;
-
-        datum.values.push({value, color: d3_color(j)})
-      }
+      datum.values.push({value, color: d3_color(j)})
     }
-    return data
+  }
+  return data
 
-    function getLastValue(i,j) {
-      if (i === 0) return 0
-      return data[i-1].values[j].value
-    }
+  function getLastValue(i,j) {
+    if (i === 0) return 0
+    return data[i-1].values[j].value
   }
 
 }
 
-CircleAbsorber.prototype.run = function () {
+CircleAbsorber.prepareInventedData = function() {
+  const values_key = "values",
+    value_key = "value";
+  const data = CircleAbsorber.inventData(100, 10, 100, values_key, value_key);
+  CircleAnimationModel.calculateDiff(data, d => d[values_key], d => d[value_key])
+  console.log(data)
+
+  return data
+}
+
+CircleAbsorber.prototype.tick = function(t) {
   const self = this;
-  const circleAnimationModel = new CircleAnimationModel();
-  circleAnimationModel.initial(self.dim, 2000, 2000)
-  const tick = t => {
-    if (!self.running) self.timer.stop()
-    circleAnimationModel.update(t, self.data, self.getTargetMousePos.bind(self));
-    self.context.clearRect(0, 0, self.dim.width, self.dim.height);
-    circleAnimationModel.draw(t, self.context)
-  }
-  self.timer = d3.timer(tick, 0, 5000);
+  t += self.last_timer_elapsed
+  self.timer_elapsed = t;
+  self.circleAnimationModel.update(t, self.data, self.getTargetMousePos.bind(self));
+  self.context.clearRect(0, 0, self.dim.width, self.dim.height);
+  self.circleAnimationModel.draw(t, self.context)
 }
 
 CircleAbsorber.prototype.getTargetMousePos = function() {
@@ -96,23 +109,27 @@ CircleAbsorber.prototype.getTargetMousePos = function() {
   }
 }
 
+CircleAbsorber.prototype.runToggle = function() {
+  const self = this;
+
+  if (self.running) self.stop();
+  else self.start();
+}
+
 CircleAbsorber.prototype.start = function() {
   const self = this;
 
-  if (!self.hasOwnProperty('running')) {
-    self.dom.start_btn.html("stop")
+  self.running = true;
+  self.dom.start_btn.html("stop")
+  self.timer.restart(self.tick.bind(self))
+}
 
-    self.running = true;
-    self.run()
-  } else if (self.running) {
-    self.dom.start_btn.html("start")
+CircleAbsorber.prototype.stop = function () {
+  const self = this;
 
-    self.running = false;
-  } else if (!self.running) {
-    self.dom.start_btn.html("stop")
-
-    self.running = true
-    // self.run()
-  }
+  self.timer.stop();
+  self.last_timer_elapsed = self.timer_elapsed;
+  self.dom.start_btn.html("start")
+  self.running = false;
 }
 
