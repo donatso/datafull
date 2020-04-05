@@ -19,7 +19,7 @@ CircleAbsorber.prototype.initial = function () {
 
   self.createElements();
   self.data = CircleAbsorber.prepareInventedData()
-  self.circleAnimationModel.initial(self.dim, 2000, 2000);
+  self.circleAnimationModel.initial(self.dim, 6000, 2000);
 
   self.timer = d3.timer(self.tick.bind(self));
   if (!self.running) self.stop()

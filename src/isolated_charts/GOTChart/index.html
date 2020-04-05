@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>example</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script src="index.js"></script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+      }
+    </style>
+
+    <style>
+      @font-face {
+        font-family: gotFont;
+        src: url("data/Game of Thrones.ttf");
+      }
+
+      button.start {
+        position: absolute;
+        right: 0;
+        margin: 10px;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+
+        transition: .3s;
+      }
+
+      button.start:hover {
+        background-color: lightgrey;
+        color: black;
+      }
+
+      .chart_cont {
+        height: 100vh;
+        color: white;
+
+        background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+          url("data/backgroundgot.jpg");
+
+        background-color: rgb(0, 0, 10); /* Used if the image is unavailable */
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-size: cover; /* Resize the background image to cover the entire container */
+      }
+
+      .header {
+        display: block;
+        z-index: 100;
+        position: relative;
+      }
+
+      div.date {
+        position: absolute;
+        right: 90px;
+        bottom: 20px;
+        font-family: gotFont;
+      }
+
+      div.date h1 {
+        font-size: 60px;
+        font-weight: normal;
+      }
+
+      .header div.heading {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 10px;
+        margin: auto;
+        width: max-content;
+      }
+
+      .header div.heading h1 {
+        font-size: 38px;
+      }
+
+      .header div.start_button {
+        position: absolute;
+        top: 30px;
+        right: 60px;
+        transform: scale(1);
+      }
+
+      canvas {
+        position: absolute;
+        z-index: 1;
+      }
+
+      svg {
+        position: absolute;
+        z-index: 2;
+      }
+
+      #barChart .x_axis {
+        display: none;
+      }
+
+      #barChart .tick text {
+        font-size: 32px;
+      }
+
+      #barChart .tick {
+        font-weight: normal;
+      }
+
+      #barChart .tick {
+        display: block;
+      }
+
+      text.name_label {
+      }
+
+      div.date h1 span.num {
+        font-size: 110px;
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="chart_cont" id="barChart">
+        <div class="date"><h1 ref="counter"></h1></div>
+        <div class="header">
+          <div class="start_button">
+            <button @click="initial()" class="start">start</button>
+          </div>
+        </div>
+        <canvas ref="main_canvas"></canvas>
+        <svg
+          id="horiz_bar_chart"
+          :width="dim.svg.width"
+          :height="dim.svg.height"
+          ref="svg"
+        >
+          <defs>
+            <clipPath id="main_clip">
+              <rect
+                x="0"
+                y="0"
+                :width="dim.main_group.width+150"
+                :height="dim.main_group.height"
+              ></rect>
+            </clipPath>
+            <clipPath id="bar_clip">
+              <rect
+                x="0"
+                y="0"
+                :width="dim.main_group.width"
+                :height="dim.main_group.height"
+              ></rect>
+            </clipPath>
+            <clipPath id="xaxis_clip">
+              <rect
+                x="-40"
+                y="-10"
+                :width="dim.node.bar.width+60"
+                :height="90"
+              ></rect>
+            </clipPath>
+
+            <filter id="f2">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+              <feOffset dx="1" dy="1" result="offsetblur" />
+              f
+              <feFlood flood-color="white" />
+              <feComposite in2="offsetblur" operator="in" />
+              <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter
+              v-for="i in 8"
+              :id="'circle_source_img_'+ i"
+              x="0%"
+              y="0%"
+              width="100%"
+              height="100%"
+            >
+              <feImage :xlink:href="'data/seasons_logos/'+i+'.png'" />
+            </filter>
+          </defs>
+          <g
+            class="focus"
+            ref="focus_group"
+            :transform="'translate(' + dim.margin.left + ', ' + dim.margin.top + ')'"
+          >
+            <g ref="x_axis" class="x_axis" clip-path="url(#xaxis_clip)"></g>
+            <image
+              class="main_image"
+              preserveAspectRatio="xMidYMid slice"
+              :width="dim.main_pic.width"
+              :height="dim.main_pic.height"
+              :transform="'translate(' + (dim.main_group.width-dim.main_pic.width) + ', ' + (dim.main_group.height-dim.main_pic.height) + ')'"
+              style="opacity: .7"
+            ></image>
+
+            <g
+              class="main_group"
+              ref="main_group"
+              clip-path="url(#main_clip)"
+            ></g>
+          </g>
+        </svg>
+        <div class="footer"></div>
+      </div>
+      `
+    </div>
+
+    <script type="module">
+      import ChartBase from "./index.js";
+      const chartBase = new ChartBase();
+
+      new Vue({
+        el: "#barChart",
+        data() {
+          return {
+            data: chartBase.reactive_data,
+            dim: chartBase.reactive_data.dim
+          };
+        },
+        mounted() {
+          const vm = this;
+          // vm.initial();
+        },
+        methods: {
+          initial() {
+            const vm = this;
+            document.querySelector(".start_button").style.display = "none";
+            setTimeout(() => {
+              chartBase.initial(vm);
+            }, 1000);
+          },
+
+          loadData(data) {
+            chartBase.setUploadedCsv(data);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

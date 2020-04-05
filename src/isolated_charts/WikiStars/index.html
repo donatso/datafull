@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>example</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+
+  <script src="index.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+    }
+  </style>
+
+  <style>
+    .canvas_cont {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      background-image: url("https://upload.wikimedia.org/wikipedia/commons/f/fc/1920x1200-space-free-kd3592201.jpg"); /* The image used */
+      background-color: #cccccc; /* Used if the image is unavailable */
+      background-position: center; /* Center the image */
+      background-repeat: no-repeat; /* Do not repeat the image */
+      background-size: cover; /* Resize the background image to cover the entire container */
+    }
+
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas {
+      position: absolute;
+      display: none;
+    }
+
+    .semafor {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      z-index: 100;
+    }
+
+    .search_cont {
+      position: fixed;
+      top: 10px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: min-content;
+      height: min-content;
+      background-color: white;
+      z-index: 100;
+
+      display: flex;
+    }
+
+    .change_viz {
+      position: fixed;
+      top: 0;
+      right: 10px;
+      bottom: 0;
+      margin: auto;
+      width: 50px;
+      z-index: 100;
+      cursor: pointer;
+      background-color: transparent;
+    }
+
+    .change_viz svg {
+      transition: 3s;
+    }
+
+    .arrow_rot {
+      transform: rotateX(180deg);
+    }
+
+  </style>
+
+
+</head>
+<body>
+
+<div ref="canvas_cont" class="canvas_cont" id="chart">
+  <div v-if="false" class="semafor">
+    <span>x: {{ chart_data.mouse[0].toFixed(2) }}</span><br>
+    <span>y: {{ chart_data.mouse[1].toFixed(2) }}</span><br>
+    <span>Q{{ chart_data.mouse_index }}</span>
+    <br>
+  </div>
+  <div class="search_cont" style="background-color: transparent">
+    <div>
+      <AutoComplete
+              v-model="search_person_input"
+              :fetch-results="search_WD"
+              :selectedHandler="selectedPerson_WD"
+              placeholder="search label"
+              width="10em"
+      ></AutoComplete>
+    </div>
+    <div>
+      <input
+              type="text"
+              style="width: 10em; margin-left: 1em;"
+              placeholder="search id"
+              @keyup.enter="selectedPersonId_WD($event)"
+      >
+    </div>
+  </div>
+  <div class="change_viz" @click="changeViz">
+    <svg :class="{arrow_rot: chart_data.active_viz === 'stars'}" fill="white" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+        <g><g transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)"><path d="M4679.9,4979.8c-269.1-72.6-245.6-51.3-1934.7-1736.1C1867.5,2366,1113.6,1597.2,1073.1,1535.3c-111-164.4-162.3-326.7-175.1-538.1c-17.1-346,76.9-597.9,313.9-832.8c158-155.9,296.8-239.2,482.6-288.3c164.4-42.7,420.7-40.6,568,2.1c269.1,79,337.4,132.4,1007.9,796.5l634.2,630v-2562.6c0-2208.1,4.3-2579.7,32-2697.1c115.3-484.7,559.5-835,1054.9-835c457,0,839.2,258.4,1022.9,685.5l57.7,136.7l10.7,2635.2l10.7,2633l640.7-632.1c467.7-459.1,672.7-649.2,760.2-694C7885.3-235,8376.4-188,8711.7,89.6c380.1,318.2,497.6,841.4,292.6,1302.6c-64.1,145.2-126,207.1-1702,1787.4c-1725.5,1731.9-1710.5,1716.9-1986,1798.1C5171,5020.4,4833.6,5020.4,4679.9,4979.8z"/></g></g>
+      </svg>
+  </div>
+  <canvas
+          ref="main_canvas"
+          class="main_canvas"
+  ></canvas>
+  <svg ref="main_svg">
+    <defs>
+      <linearGradient id="svg_grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:rgba(0,0,12,0);stop-opacity:1"></stop>
+        <stop offset="30%" style="stop-color:rgba(0,0,20,0);stop-opacity:1"></stop>
+        <stop offset="40%" style="stop-color:rgba(7,13,0,0);stop-opacity:1"></stop>
+        <stop offset="50%" style="stop-color:rgba(3,16,1,0.83);stop-opacity:1"></stop>
+        <stop offset="58%" style="stop-color:rgba(0,20,10,0.85);stop-opacity:1"></stop>
+        <stop offset="58%" style="stop-color:rgba(0,0,0,0.99);stop-opacity:1"></stop>
+        <stop offset="67%" style="stop-color:rgba(25,36,42,.99);stop-opacity:1"></stop>
+        <stop offset="67%" style="stop-color:rgba(25,36,42,.99);stop-opacity:1"></stop>
+      </linearGradient>
+      <clipPath id="cut_overflow">
+        <rect x="0" y="0" :width="chart_data.dim.width" :height="chart_data.dim.height" />
+      </clipPath>
+    </defs>
+
+    <g ref="main_svg_group" >
+      <g ref="stars_group_cont">
+        <rect
+                ref="svg_background"
+                :width="chart_data.dim.full_width"
+                :height="chart_data.dim.full_height*3"
+                fill="url(#svg_grad1)"
+        ></rect>
+        <!--<image-->
+        <!--:width="chart_data.dim.full_width"-->
+        <!--xlink:href="https://upload.wikimedia.org/wikipedia/commons/f/fc/1920x1200-space-free-kd3592201.jpg"-->
+        <!--&gt;</image>-->
+        <image
+                :width="chart_data.dim.full_width"
+                :height="chart_data.dim.full_height"
+                :transform="'translate(0, ' + chart_data.dim.full_height + ')'"
+                xlink:href="data/tree-landscape-clipart-5.png"
+        ></image>
+        <g
+                :transform="'translate(' + chart_data.dim.margin.left + ', ' + chart_data.dim.margin.top + ')'"
+        >
+          <g ref="stars_group">
+            <rect
+                    :width="chart_data.dim.width"
+                    :height="chart_data.dim.height"
+                    fill="transparent"
+            ></rect>
+          </g>
+        </g>
+
+      </g>
+      <g ref="family_tree_group_cont"
+         style="pointer-events: none"
+         :transform="'translate(' + chart_data.dim.margin.left + ', ' + chart_data.dim.margin.top + ')'"
+      >
+        <g ref="family_tree_group"></g>
+      </g>
+    </g>
+  </svg>
+  <div
+          style="position: absolute"
+          :style="{
+        transform: 'translate(' + chart_data.dim.margin.left + 'px, ' + chart_data.dim.margin.top + 'px)',
+      }"
+  >
+    <div
+            style="position: relative; pointer-events: none"
+            class="chart_div"
+            ref="chart_div"
+
+    >
+    </div>
+  </div>
+  <Tooltip v-if="chart_data.tooltip" v-bind="chart_data.tooltip"></Tooltip>
+  <!--<canvas ref="second_canvas" class="second_canvas"></canvas>-->
+</div>
+
+
+<script type="module">
+  import ChartBase from "./index.js"
+  const chartBase = new ChartBase();
+
+  new Vue({
+    el: "#chart",
+    data() {
+      return {
+        chart_data: chartBase.reactive_data,
+        search_person_input: {text:"", datum:{}},
+      }
+    },
+    mounted() {
+      const vm = this;
+      vm.initial();
+    },
+    methods: {
+      initial() {
+        const vm = this;
+        chartBase.initial(vm);
+      },
+      search_WD(text_substr, callback) {
+        chartBase.getWikiDataElementByStr(text_substr).then(data => {
+          callback(data)
+        })
+      },
+
+      selectedPersonId_WD(event) {
+        const vm = this;
+        chartBase.getItemById_WD(event.target.value)
+      },
+
+      selectedPerson_WD(datum) {
+        const vm = this;
+
+        chartBase.getItemById_WD(datum.wiki_id)
+      },
+
+      changeViz() {
+        const vm = this;
+
+        chartBase.changeViz()
+      }
+    }
+  })
+
+</script>
+</body>
+</html>
