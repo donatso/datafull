@@ -31,7 +31,7 @@ CircleAbsorber.prototype.createElements = function () {
   self.dom.start_btn = self.dom.cont.append("button").attr("class", "start").html("start").on("click", self.runToggle.bind(self))
   self.dom.canvas = self.dom.cont.append("canvas")
 
-  self.dim = {width: window.innerWidth, height: window.innerHeight}
+  self.dim = {width: window.innerWidth-5, height: window.innerHeight-5}
 
   Object.entries({
     position: "absolute",
@@ -46,7 +46,7 @@ CircleAbsorber.prototype.createElements = function () {
     self.dom.start_btn.node().style[k] = v;
   })
 
-  self.dom.canvas.attr("width", self.dim.width-5).attr("height", self.dim.height-5)
+  self.dom.canvas.attr("width", self.dim.width).attr("height", self.dim.height)
   self.context = self.dom.canvas.node().getContext('2d');
 }
 
