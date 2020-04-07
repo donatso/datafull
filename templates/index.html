@@ -41,12 +41,12 @@
         const album = document.body.querySelector("#charts");
 
         const templates = [
-          "/src/isolated_charts/BarChart",
-          "/src/isolated_charts/CircleAbsorber",
-          "/src/isolated_charts/PvsT",
-          "/src/isolated_charts/GOTChart",
-          "/src/isolated_charts/Top12",
-          "/src/isolated_charts/ButterflyChart",
+          "../src/isolated_charts/BarChart",
+          "../src/isolated_charts/CircleAbsorber",
+          "../src/isolated_charts/PvsT",
+          "../src/isolated_charts/GOTChart",
+          "../src/isolated_charts/Top12",
+          "../src/isolated_charts/ButterflyChart",
         ];
         for (let i = 0; i < templates.length; i++) {
           insertAlbum(album, templates[i], templates[i] + "/logo.jpg")
@@ -57,8 +57,8 @@
         const album = document.body.querySelector("#externalLinks");
 
         const templates = [
-          ["https://terraadriatica.hr/en/journey/Milanovic", "/templates/external_links_logo/ta_journey.jpg"],
-          ["https://www.reddit.com/r/dataisbeautiful/comments/dgp8f8/oc_100_years_of_plane_crashes", "/templates/external_links_logo/aviation.jpg"],
+          ["https://terraadriatica.hr/en/journey/Milanovic", "external_links_logo/ta_journey.jpg"],
+          ["https://www.reddit.com/r/dataisbeautiful/comments/dgp8f8/oc_100_years_of_plane_crashes", "external_links_logo/aviation.jpg"],
         ];
 
         for (let i = 0; i < templates.length; i++) {
