@@ -12,9 +12,10 @@
       body {
         margin: 0;
         padding: 0;
+        background-color: darkgrey;
       }
 
-      #album {
+      .album {
         max-width: 900px;
         margin: auto;
         display: flex;
@@ -24,38 +25,59 @@
   </head>
   <body>
     <div>
-      <h2>Templates</h2>
-      <div id="album"></div>
+      <h2>Charts</h2>
+      <div id="charts" class="album"></div>
+      <hr>
+      <h2>External Links</h2>
+      <div id="externalLinks" class="album"></div>
+
     </div>
 
     <script type="module">
-      const album = document.body.querySelector("#album");
+      {
+        const album = document.body.querySelector("#charts");
 
-      const templates = [
-        "/src/isolated_charts/BarChart",
-        "/src/isolated_charts/CircleAbsorber",
-        "/src/isolated_charts/PvsT",
-        "/src/isolated_charts/GOTChart",
-        "/src/isolated_charts/Top12",
-        "/src/isolated_charts/ButterflyChart",
-      ];
+        const templates = [
+          "/src/isolated_charts/BarChart",
+          "/src/isolated_charts/CircleAbsorber",
+          "/src/isolated_charts/PvsT",
+          "/src/isolated_charts/GOTChart",
+          "/src/isolated_charts/Top12",
+          "/src/isolated_charts/ButterflyChart",
+        ];
+        for (let i = 0; i < templates.length; i++) {
+          insertAlbum(album, templates[i], templates[i] + "/logo.jpg")
+        }
+      }
 
-      for (let i = 0; i < templates.length; i++) {
-        const template = templates[i];
-        const node = album.appendChild(document.createElement("div"));
+      {
+        const album = document.body.querySelector("#externalLinks");
+
+        const templates = [
+          ["https://terraadriatica.hr/en/journey/Milanovic", "/templates/external_links_logo/ta_journey.jpg"],
+          ["https://www.reddit.com/r/dataisbeautiful/comments/dgp8f8/oc_100_years_of_plane_crashes", "/templates/external_links_logo/aviation.jpg"],
+        ];
+
+        for (let i = 0; i < templates.length; i++) {
+          insertAlbum(album, templates[i][0], templates[i][1])
+        }
+      }
+
+      function insertAlbum(album, index_url, logo_url) {
+        const node = album.appendChild(document.createElement("a"));
         node.style.display = "inline-block";
         node.style.width = "50%";
         node.style.padding = "10px";
         node.style.cursor = "pointer";
-        node.addEventListener("click", function() {
-          window.location = template;
-        });
+        node.setAttribute("href", index_url)
+        node.setAttribute("target", "_blank")
 
         const img = node.appendChild(document.createElement("img"));
         img.style.width = "100%";
-        img.src = template + "/logo.jpg";
-        img.alt = template;
+        img.src = logo_url
+        img.alt = index_url;
       }
+
     </script>
   </body>
 </html>
