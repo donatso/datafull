@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>example</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script src="index.js"></script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="app">
+      <chart />
+    </div>
+
+    <script type="module">
+      import Chart from "./Chart.js";
+
+      Vue.component("chart", Chart)
+
+      new Vue({
+        el: "#app"
+      });
+    </script>
+  </body>
+</html>
