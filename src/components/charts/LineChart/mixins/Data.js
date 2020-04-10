@@ -1,13 +1,5 @@
 import helper from "../../../../helper/index.js"
 
-function setupLineData(data, configuration) {
-  const grouped = helper.manipulation.classify.group(data, configuration.cls.getter, configuration.x_axis.getter)
-  for (let cls in grouped) {
-    if (!grouped.hasOwnProperty(cls)) continue
-    grouped[cls] = "penis"
-  }
-}
-
 function setupOneLineData(data, configuration) {
   const grouped = helper.manipulation.classify.group(data, configuration.x_axis.getter)
   const data_struct = []
@@ -40,7 +32,6 @@ function setupFrequencyData(data, configuration) {
 }
 
 export default {
-  setupLineData,
   setupFrequencyData,
   setupOneLineData,
   setupMultiLineData

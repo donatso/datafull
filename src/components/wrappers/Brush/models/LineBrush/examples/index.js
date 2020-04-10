@@ -9,8 +9,8 @@ export default function() {
       style: { pos: [0.52, 0.7, 0.7, 0.02] },
       resizable: true,
       configuration: {
-        x_axis: { value: "views", treat_as: { value: "number" } },
-        y_axis: { value: "__frequency", treat_as: { value: "number" } }
+        x_axis: { key: "views", type: "number" },
+        y_axis: { key: "__frequency", type: "number" }
       }
     }
   });

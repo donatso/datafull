@@ -9,7 +9,7 @@ export default function MultiLineChart(cont, options, store) {
 
 MultiLineChart.prototype = Object.create(LineChartModel.prototype)
 
-LineChartModel.prototype.prepareData = function() {
+MultiLineChart.prototype.prepareData = function() {
   const self = this;
   const data = self.store.data.active_data;
 
