@@ -14,11 +14,11 @@ Run.run = function(data, animation_time, updateF) {
     for (let k in data) {
       if (!data.hasOwnProperty(k)) continue
       const value = Run.getProgressValue(data[k], t_date)
-      nodes.push({name:k, value})
+      nodes.push({name:k, value, type: data[k][0].type})
     }
     nodes.sort((a,b) => b.value - a.value)
     nodes = nodes.slice(0,20)
-    updateF(nodes)
+    updateF(nodes, t, t_date)
   })
 
 }

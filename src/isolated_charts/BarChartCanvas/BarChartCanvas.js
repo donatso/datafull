@@ -1,254 +1,124 @@
-export default function BarChartCanvas() {}
+import VizDatum from "./VizDatum/index.js"
 
-BarChartCanvas.prototype.updateState = function(d3x, d3y, ctx) {
+export default function BarChartCanvas() {
   const self = this;
+  self.nodes = {}
 
-  self.d3x = d3x
-  self.d3y = d3y
+  self.ctx = null;
+  self.dim = {};
+  self.d3x = null;
+  self.d3y = null;
+}
+
+BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, transition_time) {
+  const self = this;
   self.ctx = ctx;
+  self.dim = dim;
+  self.d3x = d3x;
+  self.d3y = d3y;
+  self.d3_color = d3_color;
+  self.transition_time = transition_time;
 }
 
-BarChartCanvas.prototype.drawBars = function(data) {
+BarChartCanvas.prototype.update = function(data, t) {
   const self = this;
 
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-}
+  // node enter/update
+  Object.values(self.nodes).forEach(node => node.exit = true);
+  data.forEach((datum, i) => {
+    if (!self.nodes.hasOwnProperty(datum.name)) enter(datum, i)
+    update(datum, i)
+  })
+  exit();
+  Object.values(self.nodes).forEach(node => node.calc(t));
+  console.log("nodes_len", Object.keys(self.nodes).length)
 
-BarChartCanvas.prototype.drawBarText = function(data) {
-  const self = this;
+  function enter(datum, i) {
+    self.nodes[datum.name] = new VizDatum();
+    self.nodes[datum.name].attrs = {
+      x:25,
+      y: self.dim.height,
+      w:0,
+      h:self.d3y.bandwidth(),
+      color: self.d3_color(datum.name),
+    }
+  }
+  function update(datum, i) {
+    const node = self.nodes[datum.name];
+    node.data = datum;
+    node.exit = false;
+    const trans = {t:t, tt: self.transition_time, dt:0}
 
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-}
-
-BarChartCanvas.prototype.drawBarTextRight = function(data) {
-  const self = this;
-
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-}
-
-BarChartCanvas.prototype.drawBarTextLeft = function(data) {
-  const self = this;
-
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-}
-
-BarChartCanvas.prototype.drawBarTextDate = function(data) {
-  const self = this;
-
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-
-  function updateDate({date, transition}) {
-    const self = this;
-    console.log(date)
-    self.dom.counter
-      .transition()
-      .ease(d3.easeLinear)
-      .duration(transition)
-      .tween("text", function () {
-        if (self.counter_type === "date") return self.tweenDate(this, date);
-      });
-
+    node
+      .attr("y", self.d3y(i), trans)
+      .attr("w", self.d3x(datum.value))
   }
 
-  function tweenDate(counter_node, new_value) {
-    const current_value = new Date(counter_node.textContent);
-    const i = d3.interpolateDate(current_value, new Date(new_value));
-    return function (t) {
-      counter_node.textContent = d3.timeFormat("%Y-%m-%d")(i(t))
-    };
+  function exit() {
+    Object.values(self.nodes)
+      .filter(node => node.exit)
+      .forEach((node, i) => {
+        node.exiting = true;
+        const datum = node.attrs;
+        const trans = {t: t, tt: self.transition_time, dt: 0, endCallback() {delete self.nodes[datum.name]}}
+
+        node
+          .attr("w", self.d3x(datum.value))
+          .attr("y", self.d3y(20), trans)
+
+      })
+  }
+
+}
+
+BarChartCanvas.prototype.draw = function() {
+  const self = this;
+  const ctx = self.ctx,
+    nodes = self.nodes;
+
+  ctx.translate(150, 0);
+  for (let k in nodes) {
+    if (!nodes.hasOwnProperty(k)) continue
+    const d = nodes[k].data;
+    const a = nodes[k].attrs;
+
+    drawRect(a, d);
+    drawRectText(a, d);
+    if (d.value) drawTextRight(a, d);
+    drawTextLeft(a, d);
+  }
+  ctx.translate(-150, 0);
+
+
+  function drawRect(a, d) {
+    ctx.fillStyle = a.color;
+    ctx.fillRect(0, a.y, a.w, a.h);
+  }
+
+  function drawRectText(a, d) {
+    ctx.save();ctx.beginPath();ctx.rect(0, a.y, a.w, a.h);ctx.clip();
+
+    ctx.fillStyle = "white";
+    ctx.font = '32px sans-serif';
+    ctx.textAlign = "end";
+    ctx.fillText(d.name, a.w - 15, a.y + a.h / 2 + 32 / 2);
+
+    ctx.restore()
+  }
+
+  function drawTextRight(a, d) {
+    ctx.fillStyle = "white";
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = "start";
+    ctx.fillText(Math.floor(d.value).toLocaleString("en-US"), a.w + 10, a.y + a.h / 2 + 24 / 2);
+  }
+
+  function drawTextLeft(a, d) {
+    ctx.fillStyle = "white";
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = "end";
+    ctx.fillText(d.type, -10, a.y + a.h / 2 + 24 / 2);
   }
 }
-
-BarChartCanvas.prototype.drawBarTextAxis = function(data) {
-  const self = this;
-
-  const d3x = self.d3x,
-    d3y = self.d3x,
-    ctx = self.ctx;
-}
-
-
-BarChartCanvas.prototype.update = function(iter) {
-  const self = this;
-
-  const data = self.data_stash[iter].values;
-  self.updateDate(self.data_stash[iter])
-
-  self.d3_x
-    .domain([0, d3.max(data, d => d.value)]);
-
-  self.dom.svg_x_axis
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.data_stash[iter].transition)
-    .call(self.d3_x_axis)
-
-  const bar = self.dom.svg_main_group.selectAll("g.bar")
-    .data(data, d => d.name)
-
-  const bar_exit = bar.exit()
-
-  bar_exit
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.transition_time)
-    .attr("transform", (d, i) => "translate(" + self.dim.node.pic.width + ", " + self.dim.svg.height + ")")
-    .on("end", function () {
-      this.remove();
-    })
-
-  bar_exit.select("rect.bar")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.transition_time)
-    .attr("width", () => {
-      const d = self.data_stash[iter-1].values[9];
-      const w = self.d3_x(d.value)
-      return w > 0 ? w : 0
-    })
-
-  bar_exit.select("text.name_label")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.transition_time)
-    .attr("x", () => {
-      const d = self.data_stash[iter-1].values[9];
-      return self.d3_x(d.value) - 10;
-    })
-
-  bar_exit.select("text.value_label")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.transition_time)
-    .attr("x", () => {
-      const d = self.data_stash[iter-1].values[9];
-      return self.d3_x(d.value) + 3;
-    })
-    .tween("text", function() {
-      const d = self.data_stash[iter-1].values[9];
-      const current_value = parseInt(this.textContent.split(",").join(""))
-      var i = d3.interpolate(current_value, d.value);
-
-      return function(t) {
-        this.textContent = Math.round(i(t)).toLocaleString('en-US');
-      };
-    });
-
-  const bar_enter = bar
-    .enter()
-    .append("g")
-    .attr("class", "bar")
-    .attr("transform", (d, i) => "translate(" + self.dim.node.pic.width + ", " + self.dim.svg.height + ")")
-
-  bar_enter.append("rect")
-    .attr("class", "bar")
-    .style("fill", (d,i) => self.d3_color(d.name))
-    .style("opaselfty", 0.93)
-    .attr("width", () => {
-      const d = self.data_stash[iter > 0 ? iter-1 : 0].values[9];
-      const w = self.d3_x(d.value)
-      return w > 0 ? w : 0
-    })
-    .attr("height", self.d3_y.bandwidth())
-    .attr("x", 0)
-
-  bar_enter.append("text")
-    .attr("class", "value_label")
-    .attr("x", () => {
-      const d = self.data_stash[iter > 0 ? iter-1 : 0].values[9];
-      return self.d3_x(d.value) + 3;
-    })
-    .attr("y", d => {
-      return  self.d3_y.bandwidth() / 2 + 9;
-    })
-    .style("fill", "white")
-    .style("font-weight", "bold")
-    .style("font-size", 24)
-    .text("0")
-
-  bar_enter.append("text")
-    .attr("class", "name_label")
-    .attr("clip-path", "url(#bar_clip)")
-    .attr("y", d => {
-      return self.d3_y.bandwidth() / 2 + 8.5;
-    })
-    .attr("x", () => {
-      const d = self.data_stash[iter > 0 ? iter-1 : 0].values[9];
-      return self.d3_x(d.value) - 10;
-    })
-    .style("text-anchor", "end")
-    .style("fill", "white")
-    .style("font-size", 26)
-    .style("font-weight", "bold")
-    .text(d => d.name);
-
-  bar_enter.append("text")
-    .attr("class", "type_label")
-    .attr("y", d => {
-      return self.d3_y.bandwidth() / 2 + 6;
-    })
-    .attr("x", -6)
-    .style("text-anchor", "end")
-    .style("fill", "white")
-    .style("font-size", 16)
-    .style("font-weight", "bold")
-    .text(d => d.type);
-
-  const bar_update = bar_enter.merge(bar)
-
-  bar_update
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.data_stash[iter].transition)
-    .attr("transform", (d,i) => "translate(" + self.dim.node.pic.width + ", " + self.d3_y(i) + ")")
-
-
-  bar_update.select("rect.bar")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.data_stash[iter].transition)
-    .attr("width", d => {
-      const w = self.d3_x(d.value)
-      return w > 0 ? w : 0
-    })
-
-  bar_update.select("text.name_label")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.data_stash[iter].transition)
-    .attr("x", d => {
-      return self.d3_x(d.value) - 10;
-    })
-
-
-  bar_update.select("text.value_label")
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(self.data_stash[iter].transition)
-    .attr("x", d => {
-      return self.d3_x(d.value) + 3;
-    })
-    .tween("text", function(d) {
-      const current_value = parseInt(this.textContent.split(",").join(""))
-      var i = d3.interpolate(current_value, d.value);
-
-      return function(t) {
-        d.i_value = Math.round(i(t));
-        this.textContent = d.i_value.toLocaleString('en-US');
-      };
-    });
-}
-
-
 
 

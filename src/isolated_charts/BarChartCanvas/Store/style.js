@@ -32,6 +32,8 @@ style.setupColors = function() {
 
 style.calculateDims = function({width, height}) {
   const dim = {
+    width,
+    height,
     svg: {width, height},
     main_group: {},
     margin: {
