@@ -1,0 +1,50 @@
+const Data = {};
+export default Data;
+
+Data.setupAxis = function (dim) {
+
+  const d3y = d3.scaleBand()
+    .range([dim.main_group.height * 100 / 10, 0])
+    .domain(d3.range(100).map((d, i) => i).reverse())
+    .padding(0.1);
+
+  const d3x = d3.scaleLinear()
+    .range([0, dim.node.bar.width])
+    .domain(0, 100)
+
+  return [d3x, d3y]
+}
+
+
+Data.structureData = function(data) {
+  data = datifyAndNumify(data)
+  return group(data, d => d.name)
+
+  function datifyAndNumify(data) {
+    data.forEach(d => {d._date = new Date(d.date);d._value = parseFloat(d.value);})
+    return data
+  }
+
+  function group(data, classGetter) {
+    const classDict = {}
+    data.forEach(d => pushToObjectKey(classDict, classGetter(d), d))
+    return classDict
+
+
+    function pushToObjectKey(dct, k, v) {
+      if (!dct.hasOwnProperty(k)) dct[k] = []
+      dct[k].push(v)
+    }
+  }
+}
+
+Data.sortByKey = function(data, key) {
+  function sortBy(a, b) {
+    if (a[key] < b[key])
+      return -1;
+    if (a[key] > b[key])
+      return 1;
+    return 0;
+  }
+  return data.sort(sortBy)
+}
