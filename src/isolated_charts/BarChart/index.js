@@ -298,31 +298,29 @@ export default class BarChart {
     const CI = this;
 
     const sleep = m => new Promise(r => setTimeout(r, m));
-
     (async() => {
       for (;CI.iter < CI.data_stash.length; CI.iter++) {
         if (CI.running === false) break
 
         CI.update(CI.iter);
+        console.log(CI.update)
         await sleep(CI.data_stash[CI.iter].transition);
       }
     })();
 
   }
 
-  update(iter) {
+  updateDate({date, transition}) {
     const CI = this;
-
-    const data = CI.data_stash[iter];
+    console.log(date)
     CI.dom.counter
       .transition()
       .ease(d3.easeLinear)
-      .duration(CI.data_stash[iter].transition)
+      .duration(transition)
       .tween("text", function () {
-        if (CI.counter_type === "date") return CI.tweenDate(this, data.date);
+        if (CI.counter_type === "date") return CI.tweenDate(this, date);
       });
 
-    CI.update(iter)
   }
 
   tweenDate(counter_node, new_value) {
@@ -364,6 +362,7 @@ export default class BarChart {
     const CI = this;
 
     const data = CI.data_stash[iter].values;
+    CI.updateDate(CI.data_stash[iter])
 
     CI.d3_x
       .domain([0, d3.max(data, d => d.value)]);
