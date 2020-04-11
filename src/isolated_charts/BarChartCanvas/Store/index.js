@@ -29,6 +29,8 @@ Store.prototype.initial = function (data) {
   self.ctx = self.setupCanvas();
 
   self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
+  self.bg_image = new Image();
+  self.bg_image.src = "./data/youtubebackground.jpg"
 }
 
 Store.prototype.run = function () {
@@ -42,8 +44,9 @@ Store.prototype.update = function(data, t, date) {
   self.barChart.update(data, t);
 
   self.ctx.clearRect(0, 0, self.dim.width, self.dim.height);
-  self.barChart.draw()
+  self.ctx.drawImage(self.bg_image, 0, 0, self.dim.width, self.dim.height);
   self.draw(date);
+  self.barChart.draw()
 }
 
 Store.prototype.updateTest = function (nodes) {
@@ -66,6 +69,7 @@ Store.prototype.draw = function (date) {
 
   const ctx = self.ctx,
     dim = self.dim
+
   drawDate(date);
 
   function drawDate(date) {

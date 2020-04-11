@@ -74,9 +74,10 @@ BarChartCanvas.prototype.update = function(data, t) {
 BarChartCanvas.prototype.draw = function() {
   const self = this;
   const ctx = self.ctx,
-    nodes = self.nodes;
+    nodes = self.nodes,
+    dim = self.dim
 
-  ctx.translate(150, 0);
+  ctx.translate(dim.rect.x_offset, dim.rect.y_offset);
   for (let k in nodes) {
     if (!nodes.hasOwnProperty(k)) continue
     const d = nodes[k].data;
@@ -87,7 +88,7 @@ BarChartCanvas.prototype.draw = function() {
     if (d.value) drawTextRight(a, d);
     drawTextLeft(a, d);
   }
-  ctx.translate(-150, 0);
+  ctx.translate(-dim.rect.x_offset, -dim.rect.y_offset);
 
 
   function drawRect(a, d) {

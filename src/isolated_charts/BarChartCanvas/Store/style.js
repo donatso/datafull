@@ -3,8 +3,7 @@ export default style;
 
 style.setupColors = function() {
 
-  const color =
-    [
+  const color = [
       "#FFC000",
       "#9966CC",
       "#007FFF",
@@ -34,28 +33,12 @@ style.calculateDims = function({width, height}) {
   const dim = {
     width,
     height,
-    svg: {width, height},
-    main_group: {},
-    margin: {
-      top: 120,
-      right: 150,
-      bottom: 60,
-      left: 25
-    },
-    node: {
-      pic: {width: 0},
-      bar: {width: 0},
-      value_label: {width: 130}
-    },
-    is_mobile: window.innerWidth < 600,
+    rect: {
+      x_offset: 150,
+      y_offset: 120,
+      width: width - 150 - 400
+    }
   }
-
-  dim.main_group.width = dim.svg.width - dim.margin.left - dim.margin.right;
-  dim.main_group.height = dim.svg.height - dim.margin.top - dim.margin.bottom;
-
-  dim.node.pic.width = 150;
-
-  dim.node.bar.width = dim.main_group.width - dim.node.pic.width - dim.node.value_label.width;
 
   return dim
 }

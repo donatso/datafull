@@ -4,12 +4,12 @@ export default Data;
 Data.setupAxis = function (dim) {
 
   const d3y = d3.scaleBand()
-    .range([dim.main_group.height * 100 / 10, 0])
-    .domain(d3.range(100).map((d, i) => i).reverse())
+    .range([(dim.height - dim.rect.y_offset) * 2, 0])
+    .domain(d3.range(20).map((d, i) => i).reverse())
     .padding(0.1);
 
   const d3x = d3.scaleLinear()
-    .range([0, dim.node.bar.width])
+    .range([0, dim.rect.width])
     .domain(0, 100)
 
   return [d3x, d3y]
