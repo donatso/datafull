@@ -1,6 +1,8 @@
 import Data from './data.js';
 import Run from './run.js';
 import Style from './style.js';
+import Dom from './dom.js';
+import Canvas from './canvas.js';
 import BarChartCanvas from "../BarChartCanvas.js"
 
 export default function Store() {
@@ -27,7 +29,7 @@ Store.prototype.initial = function (data) {
   self.data_stash = Data.structureData(data);
   ;[self.d3x, self.d3y] = Data.setupAxis(self.dim);
   console.log(self.data_stash)
-  ;[self.canvas, self.ctx] = self.setupCanvas();
+  ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
 
   self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
   self.bg_image = new Image();
@@ -36,7 +38,7 @@ Store.prototype.initial = function (data) {
 
 Store.prototype.run = function () {
   const self = this;
-  Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self))
+  Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
 }
 
 Store.prototype.update = function(data, t, date) {
@@ -50,36 +52,11 @@ Store.prototype.update = function(data, t, date) {
   self.barChart.draw()
 }
 
-Store.prototype.updateTest = function (nodes) {
-  const self = this;
-
-  document.querySelector("#test_cont").innerHTML = nodes.map(d => JSON.stringify(d)).join("<br>")
-
-}
-
-Store.prototype.setupCanvas = function () {
-  const self = this;
-  const canvas = document.querySelector("canvas")
-  canvas.setAttribute("width", self.dim.width);
-  canvas.setAttribute("height", self.dim.height);
-  return [canvas, canvas.getContext("2d")]
-}
-
 Store.prototype.draw = function (date) {
   const self = this;
+  const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
-  const ctx = self.ctx,
-    dim = self.dim
-
-  drawDate(date);
-
-  function drawDate(date) {
-    date = d3.timeFormat("%m/%d/%Y")(date)
-    ctx.fillStyle = "white";
-    ctx.font = '56px sans-serif';
-    ctx.textAlign = "start";
-    ctx.fillText(date, dim.width - 400, dim.height - 60);
-  }
+  Canvas.drawDate(ctx, dim, date);
 }
 
 

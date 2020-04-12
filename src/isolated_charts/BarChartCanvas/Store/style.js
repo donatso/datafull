@@ -36,7 +36,7 @@ style.calculateDims = function({width, height}) {
     rect: {
       x_offset: 150,
       y_offset: 120,
-      width: width - 150 - 400
+      width: width - 150 - 200
     }
   }
 

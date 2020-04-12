@@ -2,7 +2,8 @@ import VizDatum from "./VizDatum/index.js"
 
 export default function BarChartCanvas() {
   const self = this;
-  self.nodes = {}
+  self.nodes = {};
+  self.ticks = {}
 
   self.ctx = null;
   self.dim = {};
@@ -23,10 +24,9 @@ BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, tr
 BarChartCanvas.prototype.update = function(data, t) {
   const self = this;
 
-  // node enter/update
   Object.values(self.nodes).forEach(node => node.exit = true);
   data.forEach((datum, i) => {
-    if (!self.nodes.hasOwnProperty(datum.name)) enter(datum, i)
+    enter(datum, i)
     update(datum, i)
   })
   exit();
@@ -34,6 +34,7 @@ BarChartCanvas.prototype.update = function(data, t) {
   console.log("nodes_len", Object.keys(self.nodes).length)
 
   function enter(datum, i) {
+    if (self.nodes.hasOwnProperty(datum.name)) return
     self.nodes[datum.name] = new VizDatum();
     self.nodes[datum.name].attrs = {
       x:25,
@@ -68,6 +69,64 @@ BarChartCanvas.prototype.update = function(data, t) {
 
       })
   }
+  self.updateTicks(t)
+}
+
+BarChartCanvas.prototype.updateTicks = function(t) {
+  const self = this;
+
+  const ticks_count = 6,
+    ticks_data = self.d3x.ticks(ticks_count).map(v => ({value: v, name: v / 1000000}));
+
+  const nodes = self.ticks,
+    data = ticks_data;
+
+  setupEnterExit(data, nodes)
+  for (let k in nodes) {
+    if (!nodes.hasOwnProperty(k)) continue
+    const node = nodes[k]
+    enter(node)
+    update(node)
+    exit(node, nodes)
+    node.calc(t)
+  }
+
+  function enter(node) {
+    if (!node.enter) return
+    node.attrs = {
+      x:25,
+      alpha: 1
+    }
+  }
+  function update(node) {
+    const trans = {t:t, tt: self.transition_time, dt:0}
+    node
+      .attr("x", self.d3x(node.data.value))
+  }
+
+  function exit(node, nodes) {
+    if (!node.exit) return
+
+    const a = node.attrs;
+    const trans = {t: t, tt: 500, dt: 0, endCallback() {delete nodes[node.data.name]}}
+
+    node
+      .attr("alpha", 0, trans)
+      .attr("x", self.d3x(node.data.value))
+  }
+
+  function setupEnterExit(data, nodes) {
+    for (let k in nodes) {
+      if (!nodes.hasOwnProperty(k)) continue
+      nodes[k].enter = false
+      nodes[k].exit = true
+    }
+    data.forEach(d => {
+      if (!nodes.hasOwnProperty(d.name)) nodes[d.name] = new VizDatum(d)
+      else nodes[d.name].enter = false
+      nodes[d.name].exit = false
+    })
+  }
 
 }
 
@@ -88,6 +147,7 @@ BarChartCanvas.prototype.draw = function() {
     if (d.value) drawTextRight(a, d);
     drawTextLeft(a, d);
   }
+  drawAxis()
   ctx.translate(-dim.rect.x_offset, -dim.rect.y_offset);
 
 
@@ -119,6 +179,49 @@ BarChartCanvas.prototype.draw = function() {
     ctx.font = '24px sans-serif';
     ctx.textAlign = "end";
     ctx.fillText(d.type, -10, a.y + a.h / 2 + 24 / 2);
+  }
+
+  function drawAxis () {
+    const ticks = self.ticks,
+      h = dim.height - 200,
+      w = dim.rect.width
+
+    drawLine();
+    console.log("ticks alpha:")
+    for (let k in ticks) {
+      if (!ticks.hasOwnProperty(k)) continue
+      const d = ticks[k].data;
+      const a = ticks[k].attrs;
+
+      ctx.globalAlpha = a.alpha;
+      drawTicks(a, d);
+      drawLabel(a, d);
+      ctx.globalAlpha = 1;
+    }
+
+    function drawLine() {
+      ctx.moveTo(0, -15);
+      ctx.lineTo(w, -15);
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+    }
+
+    function drawTicks(a, d) {
+      ctx.moveTo(a.x, - 23);
+      ctx.lineTo(a.x, -7);
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+    }
+
+    function drawLabel(a, d) {
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff";
+      ctx.font = '24px sans-serif';
+      ctx.fillText(d.name, a.x, -30);
+
+      ctx.restore()
+    }
+
   }
 }
 

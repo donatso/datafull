@@ -1,14 +1,12 @@
 export default class VizDatum {
 
-  constructor() {
+  constructor(data) {
     const CI = this;
-
+    CI.data = data;
+    CI.enter = true;
     CI.attrs = {}
-
     CI.exit = false;
-
     CI.trans = {};
-
   }
 
   attr(key, value, trans) {

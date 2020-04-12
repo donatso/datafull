@@ -14,7 +14,7 @@ Run.run = function(data, canvas, animation_time, updateF, to_video) {
 
   function run() {
     const timer = d3.timer(t => {
-      if (t > 5000) timer.stop()
+      if (t > 30000) timer.stop()
       tick(t)
     })
   }
