@@ -79,3 +79,13 @@ function waitForEvent( target, type ) {
   return new Promise((res) => target.addEventListener(type, res, { once: true }));
 }
 
+// implements a sub-optimal monkey-patch for requestPostAnimationFrame
+// see https://stackoverflow.com/a/57549862/3702797 for details
+if ( !window.requestPostAnimationFrame ) {
+  window.requestPostAnimationFrame = function monkey( fn ) {
+    const channel = new MessageChannel();
+    channel.port2.onmessage = evt => fn( evt.data );
+    requestAnimationFrame( (t) => channel.port1.postMessage( t ) );
+  };
+}
+
