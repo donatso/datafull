@@ -7,7 +7,9 @@ Run.run = function(data, animation_time, updateF) {
   const [start_date, end_date] = getTimespan(data),
     timeScale = d3.scaleLinear().domain([0,animation_time]).range([start_date, end_date]);
 
-  const timer = d3.timer(t => {
+  const timer = d3.timer(tick)
+
+  function tick(t) {
     if (t > 10000) timer.stop()
     let t_date = timeScale(t),
       nodes = []
@@ -19,9 +21,10 @@ Run.run = function(data, animation_time, updateF) {
     nodes.sort((a,b) => b.value - a.value)
     nodes = nodes.slice(0,20)
     updateF(nodes, t, t_date)
-  })
-
+  }
 }
+
+
 
 Run.getProgressValue = function (data, t_date) {
   let value = null,
