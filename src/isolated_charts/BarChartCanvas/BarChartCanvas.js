@@ -53,14 +53,14 @@ BarChartCanvas.prototype.updateRects = function(data, t) {
     }
   }
   function update(node) {
+    if (node.exit) return
     const trans = {t:t, tt: self.transition_time, dt:0}
-
     node
       .attr("y", self.d3y(node.data.position), trans)
       .attr("w", self.d3x(node.data.value))
   }
 
-  function exit(node) {
+  function exit(node, nodes) {
     if (!node.exit) return
     const trans = {t: t, tt: self.transition_time, dt: 0, endCallback() {delete nodes[node.data.name]}}
     node
@@ -96,6 +96,7 @@ BarChartCanvas.prototype.updateTicks = function(t) {
     }
   }
   function update(node) {
+    if (node.exit) return
     const trans = {t:t, tt: self.transition_time, dt:0}
     node
       .attr("x", self.d3x(node.data.value))
