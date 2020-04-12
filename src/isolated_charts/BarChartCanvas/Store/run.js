@@ -20,7 +20,7 @@ Run.run = function(data, canvas, animation_time, updateF, to_video) {
   }
 
   async function runToVideo() {
-    const FPS = 30;
+    const FPS = 60;
     const vid = document.body.appendChild(document.createElement("video"))
     vid.setAttribute("controls", "")
     const recorder = new FrameByFrameCanvasRecorder(canvas, FPS);
@@ -44,6 +44,7 @@ Run.run = function(data, canvas, animation_time, updateF, to_video) {
     }
     nodes.sort((a,b) => b.value - a.value)
     nodes = nodes.slice(0,20)
+    nodes.forEach((d, i) => d.position = i)
     updateF(nodes, t, t_date)
   }
 }

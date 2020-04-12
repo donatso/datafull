@@ -48,8 +48,8 @@ Store.prototype.update = function(data, t, date) {
 
   self.ctx.clearRect(0, 0, self.dim.width, self.dim.height);
   self.ctx.drawImage(self.bg_image, 0, 0, self.dim.width, self.dim.height);
+  self.barChart.draw();
   self.draw(date);
-  self.barChart.draw()
 }
 
 Store.prototype.draw = function (date) {

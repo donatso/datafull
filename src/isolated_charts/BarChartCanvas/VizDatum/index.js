@@ -49,4 +49,18 @@ export default class VizDatum {
 
   }
 
+  static setupEnterExit(data, nodes) {
+    for (let k in nodes) {
+      if (!nodes.hasOwnProperty(k)) continue
+      nodes[k].enter = false
+      nodes[k].exit = true
+    }
+    data.forEach(d => {
+      if (!nodes.hasOwnProperty(d.name)) nodes[d.name] = new VizDatum()
+      else nodes[d.name].enter = false
+      nodes[d.name].exit = false
+      nodes[d.name].data = d
+    })
+  }
+
 }
