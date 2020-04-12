@@ -6,6 +6,7 @@ import BarChartCanvas from "../BarChartCanvas.js"
 export default function Store() {
   const self = this;
 
+  self.canvas = null;
   self.ctx = null;
   self.data_stash = [];
   self.d3x = null;
@@ -24,9 +25,9 @@ Store.prototype.initial = function (data) {
   self.dim = Style.calculateDims({width: 1280, height: 720});
   self.d3_color = Style.setupColors()
   self.data_stash = Data.structureData(data);
-  [self.d3x, self.d3y] = Data.setupAxis(self.dim);
+  ;[self.d3x, self.d3y] = Data.setupAxis(self.dim);
   console.log(self.data_stash)
-  self.ctx = self.setupCanvas();
+  ;[self.canvas, self.ctx] = self.setupCanvas();
 
   self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
   self.bg_image = new Image();
@@ -35,7 +36,7 @@ Store.prototype.initial = function (data) {
 
 Store.prototype.run = function () {
   const self = this;
-  Run.run(self.data_stash, self.animation_time, self.update.bind(self))
+  Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self))
 }
 
 Store.prototype.update = function(data, t, date) {
@@ -61,7 +62,7 @@ Store.prototype.setupCanvas = function () {
   const canvas = document.querySelector("canvas")
   canvas.setAttribute("width", self.dim.width);
   canvas.setAttribute("height", self.dim.height);
-  return canvas.getContext("2d")
+  return [canvas, canvas.getContext("2d")]
 }
 
 Store.prototype.draw = function (date) {

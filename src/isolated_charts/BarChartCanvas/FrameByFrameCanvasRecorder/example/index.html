@@ -7,7 +7,6 @@
 <body>
 <h2>works only in firefox</h2>
 <canvas id="canvas"></canvas>
-<video id="vid" controls></video>
 <script defer type="module">
   import FrameByFrameCanvasRecorder from "../index.js"
 
@@ -15,7 +14,8 @@
     const FPS = 30;
     const duration = 2; // seconds
 
-    const vid = document.querySelector("#vid")
+    const vid = document.body.appendChild(document.createElement("video"))
+    vid.setAttribute("controls", "")
     const canvas = document.querySelector("#canvas")
     const ctx = canvas.getContext('2d');
     ctx.textAlign = 'right';

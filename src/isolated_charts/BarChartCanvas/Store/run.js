@@ -1,16 +1,40 @@
+import FrameByFrameCanvasRecorder from "../FrameByFrameCanvasRecorder/index.js";
+
 const Run = {}
 export default Run;
 Run.start = function() {
 }
 
-Run.run = function(data, animation_time, updateF) {
+Run.run = function(data, canvas, animation_time, updateF, to_video) {
   const [start_date, end_date] = getTimespan(data),
     timeScale = d3.scaleLinear().domain([0,animation_time]).range([start_date, end_date]);
 
-  const timer = d3.timer(tick)
+  if (to_video) runToVideo().catch(reason => {throw reason})
+  else run()
+
+  function run() {
+    const timer = d3.timer(t => {
+      if (t > 5000) timer.stop()
+      tick(t)
+    })
+  }
+
+  async function runToVideo() {
+    const FPS = 30;
+    const vid = document.body.appendChild(document.createElement("video"))
+    vid.setAttribute("controls", "")
+    const recorder = new FrameByFrameCanvasRecorder(canvas, FPS);
+
+    let frame = 0, t = 0, duration = 5
+    while (frame++ < FPS * duration) {
+      tick(t)
+      t += 1000 / FPS;
+      await recorder.recordFrame(); // record at constant FPS
+    }
+    await recorder.setupVideo(vid);
+  }
 
   function tick(t) {
-    if (t > 10000) timer.stop()
     let t_date = timeScale(t),
       nodes = []
     for (let k in data) {
