@@ -1,5 +1,4 @@
 import AudioTimer from "./AudioTimer.js"
-
 const audioTimer = new AudioTimer();
 
 export default class FrameByFrameCanvasRecorder {
@@ -71,6 +70,21 @@ export default class FrameByFrameCanvasRecorder {
     await waitForEvent(this.recorder, "stop");
     return new Blob(this.chunks);
 
+  }
+
+  async setupVideo(video_element) {
+    const recorded = await this.export(); // we can get our final video file
+    video_element.src = URL.createObjectURL(recorded);
+    video_element.onloadedmetadata = (evt) => video_element.currentTime = 1e100; // workaround https://crbug.com/642012
+    download(video_element.src, 'movie.webm');
+
+    function download(url, filename = "file.ext") {
+      const a = document.createElement('a');
+      a.textContent = a.download = filename;
+      a.href = url;
+      document.body.append(a);
+      return a;
+    }
   }
 
 }

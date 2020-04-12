@@ -1,26 +1,19 @@
 import FrameByFrameCanvasRecorder from "./FrameByFrameCanvasRecorder.js"
-import AudioTimer from "./AudioTimer.js"
 
-// our audioTimer may require an user-gesture...
 ;(async () => {
-  const audioTimer = new AudioTimer();
-  // await new Promise(resolve => setTimeout(resolve, 3000 ))
-  await audioTimer.context.resume()
-
-
   const FPS = 30;
   const duration = 2; // seconds
 
+  const vid = document.querySelector("#vid")
   const canvas = document.querySelector("#canvas")
   const ctx = canvas.getContext('2d');
   ctx.textAlign = 'right';
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const recorder = new FrameByFrameCanvasRecorder(canvas, FPS, audioTimer);
+  const recorder = new FrameByFrameCanvasRecorder(canvas, FPS);
   await run();
-  const recorded = await recorder.export(); // we can get our final video file
-  setupVideo(recorded);
+  await recorder.setupVideo(vid);
 
   async function run() {
     let frame = 0;
@@ -36,8 +29,8 @@ import AudioTimer from "./AudioTimer.js"
     }
   }
 
-  function longDraw(x, text) {
-    return audioTimer.schedule(Math.random() * 10)
+  async function longDraw(x, text) {
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 10))
       .then(() => draw(x, text));
   }
 
@@ -50,19 +43,4 @@ import AudioTimer from "./AudioTimer.js"
     ctx.fillText(text, 290, 140);
   };
 
-  function setupVideo() {
-    const vid = document.querySelector("#vid")
-    vid.src = URL.createObjectURL(recorded);
-    vid.onloadedmetadata = (evt) => vid.currentTime = 1e100; // workaround https://crbug.com/642012
-    download(vid.src, 'movie.webm');
-  }
 })().catch(reason => {throw reason});
-
-// creates a downloadable anchor from url
-function download(url, filename = "file.ext") {
-  const a = document.createElement('a');
-  a.textContent = a.download = filename;
-  a.href = url;
-  document.body.append(a);
-  return a;
-}
