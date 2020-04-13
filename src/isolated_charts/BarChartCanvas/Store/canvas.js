@@ -1,10 +1,11 @@
 const Canvas = {};
 export default Canvas;
 
-Canvas.drawDate = function (ctx, dim, date) {
-  date = d3.timeFormat("%m/%d/%Y")(date)
+Canvas.drawTime = function (ctx, dim, time) {
+  time = parseInt(time)
+  time = time > 10000000 ? d3.timeFormat("%m/%d/%Y")(time) : time; // todo: in config if time is date
   ctx.fillStyle = "white";
   ctx.font = '56px sans-serif';
   ctx.textAlign = "start";
-  ctx.fillText(date, dim.width - 400, dim.height - 60);
+  ctx.fillText(time, dim.width - 400, dim.height - 60);
 }

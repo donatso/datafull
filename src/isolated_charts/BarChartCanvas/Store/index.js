@@ -15,7 +15,7 @@ export default function Store() {
   self.d3y = null;
   self.animation_time = 360 * 1000;
   self.transition_time = 1000;
-  self.current_date = ""
+  self.current_time = ""
   self.initialized = false;
 
   self.barChart = new BarChartCanvas();
@@ -41,7 +41,7 @@ Store.prototype.run = function () {
   Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
 }
 
-Store.prototype.update = function(data, t, date) {
+Store.prototype.update = function(data, t, time) {
   const self = this;
   self.d3x.domain([0, d3.max(data, d => d.value)]);
   self.barChart.update(data, t);
@@ -49,14 +49,14 @@ Store.prototype.update = function(data, t, date) {
   self.ctx.clearRect(0, 0, self.dim.width, self.dim.height);
   self.ctx.drawImage(self.bg_image, 0, 0, self.dim.width, self.dim.height);
   self.barChart.draw();
-  self.draw(date);
+  self.draw(time);
 }
 
-Store.prototype.draw = function (date) {
+Store.prototype.draw = function (time) {
   const self = this;
   const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
-  Canvas.drawDate(ctx, dim, date);
+  Canvas.drawTime(ctx, dim, time);
 }
 
 

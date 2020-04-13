@@ -17,11 +17,11 @@ Data.setupAxis = function (dim) {
 
 
 Data.structureData = function(data) {
-  data = datifyAndNumify(data)
+  data = Numify(data)
   return group(data, d => d.name)
 
-  function datifyAndNumify(data) {
-    data.forEach(d => {d._date = new Date(d.date);d._value = parseFloat(d.value);})
+  function Numify(data) {
+    data.forEach(d => {d._time = parseFloat(d.time);d._value = parseFloat(d.value);})
     return data
   }
 
