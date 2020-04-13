@@ -48,3 +48,10 @@ Data.sortByKey = function(data, key) {
   }
   return data.sort(sortBy)
 }
+
+Data.handleFile = function(raw_file, file_name) {
+  const data = d3.dsvFormat("\t").parse(raw_file)
+  return data
+}
+
+

@@ -36,6 +36,12 @@ Store.prototype.initial = function (data) {
   self.bg_image.src = "./data/youtubebackground.jpg"
 }
 
+Store.prototype.handleFile = function (raw_file, file_name) {
+  const data = Data.handleFile(raw_file, file_name)
+  this.initial(data)
+  this.run()
+}
+
 Store.prototype.run = function () {
   const self = this;
   Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
