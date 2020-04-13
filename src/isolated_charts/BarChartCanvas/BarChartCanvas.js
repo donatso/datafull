@@ -73,7 +73,8 @@ BarChartCanvas.prototype.updateTicks = function(t) {
   const self = this;
 
   const ticks_count = 6,
-    ticks_data = self.d3x.ticks(ticks_count).map(v => ({value: v, name: v / 1000000}));
+    ticks_data = self.d3x.ticks(ticks_count).map(n => ({value: n, name: numberFormat(n,1)}));
+  function numberFormat(n,d){let x=(''+n).length,p=Math.pow;d=p(10,d);x-=x%3;return Math.round(n*d/p(10,x))/d+" kMGTPE"[x/3]}
 
   const nodes = self.ticks,
     data = ticks_data;
