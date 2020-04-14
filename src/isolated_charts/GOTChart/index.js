@@ -149,7 +149,7 @@ export default class ChartBase {
 
     data.episodes.forEach((episode, iter) => {
       episode.scenes.forEach(scene => {
-        let scene_time =  (new Date("1 " + scene.sceneEnd) - new Date("1 " + scene.sceneStart)) / 1000;
+        let scene_time =  timeStrToSec(scene.sceneEnd) - timeStrToSec(scene.sceneStart)
         scene.characters.forEach(character => {
           const name = character.name
           if (!data_dct.hasOwnProperty(name)) data_dct[name] = d3.range(data.episodes.length).map(() => 0);
@@ -159,6 +159,12 @@ export default class ChartBase {
       })
 
     })
+
+    function timeStrToSec(time) {
+      let sec = 0; const t = time.split(":").map(v => parseInt(v))
+      sec += t[2]; sec += t[1] * 60; sec += t[0] * 60 * 60
+      return sec
+    }
 
     CI.data_stash = [];
     data.episodes.forEach(episode => {
