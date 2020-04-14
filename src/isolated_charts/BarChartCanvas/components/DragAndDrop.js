@@ -56,6 +56,7 @@ let HTML =
     <input type="file" id="fileElem">
     <label class="button" for="fileElem">Select csv file</label>
   </form>
+  <span class="file_name"></span>
 </div>
 `
 
@@ -98,7 +99,7 @@ Component.prototype.mounted = function () {
   }
 
   function unhighlight(e) {
-    dropArea.classList.remove('active')
+    dropArea.classList.remove('highlight')
   }
 
   function handleDrop(e) {
@@ -106,10 +107,17 @@ Component.prototype.mounted = function () {
   }
 
   function handleFiles(files) {
-    if (files.length <= 0) {return false;}
-    const fr = new FileReader();
-    fr.onload = function(e) {self.handleFile(e.target.result)}
-    fr.readAsText(files.item(0));
+    if (files.length === 0) {return false;}
+    const file = files[0],
+      fr = new FileReader()
+    fr.onload = onLoadFiles
+    fr.readAsText(file);
+
+    function onLoadFiles(e) {
+      const content = e.target.result, file_name = file.name;
+      self.el.querySelector(".file_name").innerHTML = file_name
+      self.handleFile(content, file_name)
+    }
   }
 
   const input = self.el.querySelector("input")
