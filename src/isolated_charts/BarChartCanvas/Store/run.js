@@ -5,22 +5,39 @@ export default Run;
 Run.start = function() {
 }
 
-Run.run = function(data, canvas, animation_time, updateF, to_video) {
+Run.run = function(data, canvas, animation_time, updateF, record, record_by_frame) {
   const [start_time, end_time] = getTimespan(data),
     timeScale = d3.scaleLinear().domain([0,animation_time]).range([start_time, end_time]);
 
-  if (to_video) runToVideo().catch(reason => {throw reason})
+  if (record) return  runRecord()
+  else if (record_by_frame) runRecordByFrame().catch(reason => {throw reason})
   else return run()
 
   function run() {
     const timer = d3.timer(t => {
-      if (t > 30000) timer.stop()
+      if (t > animation_time) timer.stop()
       tick(t)
     })
+    timer.kill = () => {
+      timer.stop()
+    }
     return timer
   }
 
-  async function runToVideo() {
+  function runRecord() {
+    const mediaRecorder = setupRecorder()
+    const timer = d3.timer(t => {
+      if (t > animation_time) timer.stop()
+      tick(t)
+    })
+    timer.kill = () => {
+      mediaRecorder.stop();
+      timer.stop()
+    }
+    return timer
+  }
+
+  async function runRecordByFrame() {
     const FPS = 60;
     const vid = document.body.appendChild(document.createElement("video"))
     vid.setAttribute("controls", "")
@@ -75,3 +92,35 @@ function getTimespan(data) {
   return d3.extent(flatten, d => d._time)
 }
 
+function setupRecorder() {
+  const canvas = document.querySelector("canvas");
+  const videoStream = canvas.captureStream(30);
+  const mediaRecorder = new MediaRecorder(videoStream);
+
+  let chunks = [];
+  mediaRecorder.ondataavailable = function(e) {
+    chunks.push(e.data);
+  };
+
+  mediaRecorder.onstop = function(e) {
+    const blob = new Blob(chunks, { 'type' : 'video/mp4' });
+    chunks = [];
+    const videoURL = URL.createObjectURL(blob);
+    const video = createVideo()
+    video.src = videoURL;
+
+  };
+  mediaRecorder.ondataavailable = function(e) {
+    chunks.push(e.data);
+  };
+  mediaRecorder.start();
+  return mediaRecorder
+
+  function createVideo() {
+    let video = canvas.parentNode.querySelector("video")
+    if (!video) video = canvas.parentNode.appendChild(document.createElement("video"))
+    video.setAttribute("controls", "")
+    video.style.maxWidth = "100%"
+    return video
+  }
+}

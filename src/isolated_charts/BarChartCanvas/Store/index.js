@@ -14,11 +14,16 @@ export default function Store() {
   self.d3x = null;
   self.d3y = null;
 
+  self.background_url = ""
+  self.bg_image = new Image()
+  self.title = "Denis"
+  self.counter_text = ""
   self.resolution = "HD"
   self.animation_time = 360 * 1000;
   self.transition_time = 1000;
 
   self.barChart = new BarChartCanvas();
+
 }
 
 Store.prototype.initial = function (data) {
@@ -34,7 +39,6 @@ Store.prototype.configure = function() {
   self.dim = Style.calculateDims(Style.resolutions[self.resolution]);
   ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
   self.d3_color = Style.setupColors();
-  Dom.setupResponsiveCanvas.call(self)
 
   self.data_stash = Data.structureData(JSON.parse(JSON.stringify(self.data)));
   ;[self.d3x, self.d3y] = Data.setupAxis(self.dim);
@@ -42,13 +46,11 @@ Store.prototype.configure = function() {
 
   self.barChart.clear()
   self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
-
-  self.bg_image = new Image();
-  self.bg_image.src = "./data/youtubebackground.jpg"
 }
 
 Store.prototype.handleFile = function (file_data, file_name) {
   const data = Data.handleRawData(file_data, file_name)
+  Dom.createTable(data)
   this.initial(data)
   this.run()
 }
@@ -56,6 +58,11 @@ Store.prototype.handleFile = function (file_data, file_name) {
 Store.prototype.run = function () {
   const self = this;
   self.timer = Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
+}
+
+Store.prototype.runRecord = function () {
+  const self = this;
+  self.timer = Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), true)
 }
 
 Store.prototype.update = function(data, t, time) {
@@ -73,12 +80,13 @@ Store.prototype.draw = function (time) {
   const self = this;
   const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
-  Canvas.drawTime(ctx, dim, time);
+  Canvas.drawTime(ctx, dim, time, self.counter_text);
+  Canvas.drawTitle(ctx, dim, self.title);
 }
 
 Store.prototype.stop = function() {
   const self = this;
-  if (self.timer) self.timer.stop();
+  if (self.timer) self.timer.kill();
 }
 
 Store.prototype.restart = function () {
@@ -86,6 +94,14 @@ Store.prototype.restart = function () {
   self.stop()
   self.configure()
   self.run()
+}
+
+Store.prototype.updateConfig = function(name, value) {
+  const self = this;
+  if (name === "transition_time" || name === "animation_time") self[name] = parseFloat(value)*1000
+  else if (name === "background_url") {self[name] = self.bg_image.src = value}
+  else self[name] = value
+  self.restart()
 }
 
 

@@ -12,6 +12,7 @@ let IDENTIFIER = "id_" + Math.random(),
   width: 480px;
   margin: 50px auto;
   padding: 20px;
+  text-align: center;
 }
 [${IDT}] #drop-area.highlight {
   border-color: purple;

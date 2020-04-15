@@ -39,9 +39,10 @@
         <div class="col s12 m8">
           <div>
             <a id="replay" class="waves-effect waves-light btn"><i class="material-icons left">replay</i>replay</a>
-            <a id="pause" class="waves-effect waves-light btn"><i class="material-icons left">pause</i>pause</a>
+            <a id="record" class="waves-effect waves-light btn"><i class="material-icons left">fiber_manual_record</i>record</a>
+            <a id="pause" class="waves-effect waves-light btn"><i class="material-icons left">stop</i>stop</a>
           </div>
-          <canvas style="border: solid #ee6e73"></canvas>
+          <canvas style="border: solid #ee6e73;width:100%"></canvas>
 
         </div>
         <div class="col s12 m4" id="side_bar_config">
@@ -52,25 +53,24 @@
     <div id="data_tab">
       <div class="row">
         <div class="col s8">
-          <div id="configuration"></div>
+          <div class="container">
+            <div id="configuration"></div>
+            <table></table>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 
-  <script type="module" src="index.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script type="module">
-    {
-      const el = document.querySelector("#main_tabs"),
-        instance = M.Tabs.init(el, {});
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      var elems = document.querySelectorAll('.collapsible');
-      var instances = M.Collapsible.init(elems, {});
-    });
-  </script>
+<script type="module" src="index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script type="module">
+  {
+    const el = document.querySelector("#main_tabs"),
+      instance = M.Tabs.init(el, {});
+  }
+</script>
 </body>
 </html>

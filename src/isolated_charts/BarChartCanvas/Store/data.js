@@ -50,8 +50,33 @@ Data.sortByKey = function(data, key) {
 }
 
 Data.handleRawData = function(raw_data, file_name) {
-  const data = d3.dsvFormat("\t").parse(raw_data)
+  const delimiter = Data.findDelimiter(raw_data)
+  console.log(delimiter)
+  const data = d3.dsvFormat(delimiter).parse(raw_data)
   return data
+}
+
+Data.findDelimiter = function (raw_data) {
+  const rows = raw_data.split("\n").slice(0,20),
+    delimiters = [";", "\t", ","]
+  let dl;
+  iter()
+  return dl
+
+  function iter() {
+    for (let i = 0; i < delimiters.length; i++) {
+      dl = delimiters[i];
+      const first_row_count = occur(rows[0], dl)
+      console.log(first_row_count)
+      if (first_row_count < 1) continue
+      if (rows.every(s => occur(s, dl) === first_row_count)) break
+    }
+  }
+
+  function occur(s, substr) {
+    const regex = new RegExp( substr, 'g' );
+    return (s.match(regex) || []).length;
+  }
 }
 
 
