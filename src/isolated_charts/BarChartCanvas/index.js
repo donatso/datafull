@@ -5,8 +5,7 @@ import SideBarConfigTemplate from "./components/SideBarConfigTemplate.js"
 const store = new Store();
 
 {
-  store.loadExampleMaybe()
-  console.log(store)
+  store.loadExample()
   if (store.data_url) {
     fetch(store.data_url).then(resp => resp.text()).then(raw_data => {
       store.handleFile(raw_data, store.data_url)

@@ -51,7 +51,6 @@ Data.sortByKey = function(data, key) {
 
 Data.handleRawData = function(raw_data, file_name) {
   const delimiter = Data.findDelimiter(raw_data)
-  console.log(delimiter)
   const data = d3.dsvFormat(delimiter).parse(raw_data)
   return data
 }
@@ -67,7 +66,6 @@ Data.findDelimiter = function (raw_data) {
     for (let i = 0; i < delimiters.length; i++) {
       dl = delimiters[i];
       const first_row_count = occur(rows[0], dl)
-      console.log(first_row_count)
       if (first_row_count < 1) continue
       if (rows.every(s => occur(s, dl) === first_row_count)) break
     }

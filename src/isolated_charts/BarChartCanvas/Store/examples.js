@@ -16,11 +16,11 @@ examples.yt = function (store) {
   store.data_url = "./data/views.csv"
 }
 
-examples.loadExampleMaybe = function(store) {
+examples.loadExample = function(store) {
   const urlParams = new URLSearchParams(window.location.search);
-  console.log(urlParams.get("example"))
   if (urlParams.get("example") === "yt") examples.yt(store)
   else if (urlParams.get("example") === "got") examples.got(store)
+  else examples.yt(store)
 }
 
 

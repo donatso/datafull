@@ -112,8 +112,8 @@ Store.prototype.updateConfig = function(name, value) {
   self.restart()
 }
 
-Store.prototype.loadExampleMaybe = function() {
-  Examples.loadExampleMaybe(this)
+Store.prototype.loadExample = function() {
+  Examples.loadExample(this)
 }
 
 

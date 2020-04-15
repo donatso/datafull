@@ -47,7 +47,6 @@ BarChartCanvas.prototype.updateRects = function(data, t) {
     exit(node, nodes)
     node.calc(t)
   }
-  console.log("nodes_len", Object.keys(nodes).length)
 
   function enter(node) {
     if (!node.enter) return
