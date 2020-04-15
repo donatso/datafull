@@ -1,9 +1,9 @@
 const Canvas = {};
 export default Canvas;
 
-Canvas.drawTime = function (ctx, dim, time, counter_text, text_scale) {
+Canvas.drawTime = function (ctx, dim, time, counter_text, date_format, text_scale) {
   time = parseInt(time)
-  time = time > 10000000 ? d3.timeFormat("%m/%d/%Y")(time) : time; // todo: in config if time is date
+  time = time > 10000000 ? d3.timeFormat(date_format)(time) : time; // todo: in config if time is date
   const fs = 56*text_scale
   ctx.fillStyle = "white";
   ctx.font = fs+'px sans-serif';

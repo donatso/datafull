@@ -1,16 +1,18 @@
 import Store from "./Store/index.js";
 import DragAndDrop from "./components/DragAndDrop.js";
-import SideBarConfig from "./components/SideBarConfig.js"
+import SideBarConfigTemplate from "./components/SideBarConfigTemplate.js"
 
 const store = new Store();
 
 {
-  store.title = "GOT screen time in seconds"
-  store.background_url = store.bg_image.src = "./data/backgroundgot.jpg"
-  store.counter_text = "Episode:"
-  fetch("./data/got_screentime.tsv").then(resp => resp.text()).then(raw_data => {
-    store.handleFile(raw_data, "./data/got_screentime.tsv")
-  })
+  store.loadExampleMaybe()
+  console.log(store)
+  if (store.data_url) {
+    fetch(store.data_url).then(resp => resp.text()).then(raw_data => {
+      store.handleFile(raw_data, store.data_url)
+      store.run()
+    })
+  }
 }
 
 {
@@ -26,7 +28,42 @@ const store = new Store();
 }
 
 {
-  const sideBarConfig = new SideBarConfig(document.querySelector("#side_bar_config"))
+  const config = [
+    {
+      label: "Text & Background",
+      elements: [
+        {type: "text", name: "title", value: store.title},
+        {type: "text", name: "counter_text", value: store.counter_text},
+        {type: "text", name: "background_url", value: store.background_url},
+      ]
+    },
+    {
+      label: "Resolution",
+      elements: [
+        {type: "radio", name: "resolution", value: store.resolution, options: ["SD", "HD", "FHD", "UHD"]},
+      ]
+    },
+    {
+      label: "Durations",
+      elements: [
+        {type: "number", name: "animation_time", value: store.animation_time/1000},
+        {type: "number", name: "transition_time", value: store.transition_time/1000},
+      ]
+    },
+  ]
+  const sideBarConfig = new SideBarConfigTemplate(document.querySelector("#side_bar_chart_config"), config)
+  sideBarConfig.watch(store.updateConfig.bind(store), store)
+}
+{
+  const config = [
+    {
+      label: "If time is a date",
+      elements: [
+        {type: "text", name: "date_format", value: store.date_format, help: "<a href='https://github.com/d3/d3-time-format#isoParse' target='_blank'/>"},
+      ]
+    }
+  ]
+  const sideBarConfig = new SideBarConfigTemplate(document.querySelector("#side_bar_data_config"), config)
   sideBarConfig.watch(store.updateConfig.bind(store), store)
 }
 {

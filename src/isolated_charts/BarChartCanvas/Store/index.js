@@ -3,6 +3,7 @@ import Run from './run.js';
 import Style from './style.js';
 import Dom from './dom.js';
 import Canvas from './canvas.js';
+import Examples from './examples.js';
 import BarChartCanvas from "../BarChartCanvas.js"
 
 export default function Store() {
@@ -18,10 +19,11 @@ export default function Store() {
   self.bg_image = new Image()
   self.title = ""
   self.counter_text = ""
-  self.resolution = "SD"
+  self.resolution = "HD"
   self.animation_time = 360 * 1000;
   self.transition_time = 1000;
   self.text_scale = 1
+  self.date_format = ""
 
   self.barChart = new BarChartCanvas();
 
@@ -42,7 +44,9 @@ Store.prototype.configure = function() {
   ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
   self.d3_color = Style.setupColors();
 
-  self.data_stash = Data.structureData(JSON.parse(JSON.stringify(self.data)));
+  let data = JSON.parse(JSON.stringify(self.data))
+  if (self.date_format) data = Data.timeToDate(data, self.date_format)
+  self.data_stash = Data.structureData(data);
   ;[self.d3x, self.d3y] = Data.setupAxis(self.dim);
   console.log(self.data_stash)
 
@@ -54,7 +58,7 @@ Store.prototype.handleFile = function (file_data, file_name) {
   const data = Data.handleRawData(file_data, file_name)
   Dom.createTable(data)
   this.initial(data)
-  this.run()
+  // this.run()
 }
 
 Store.prototype.run = function () {
@@ -86,7 +90,7 @@ Store.prototype.draw = function (time) {
   const self = this;
   const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
-  Canvas.drawTime(ctx, dim, time, self.counter_text, self.text_scale);
+  Canvas.drawTime(ctx, dim, time, self.counter_text, self.date_format, self.text_scale);
   Canvas.drawTitle(ctx, dim, self.title, self.text_scale);
 }
 
@@ -106,6 +110,10 @@ Store.prototype.updateConfig = function(name, value) {
   else if (name === "background_url") {self[name] = self.bg_image.src = value}
   else self[name] = value
   self.restart()
+}
+
+Store.prototype.loadExampleMaybe = function() {
+  Examples.loadExampleMaybe(this)
 }
 
 

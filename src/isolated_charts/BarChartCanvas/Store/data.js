@@ -79,4 +79,11 @@ Data.findDelimiter = function (raw_data) {
   }
 }
 
+Data.timeToDate = function(data, date_format) {
+  data.forEach(d => {
+    d.time = d3.timeParse(date_format)(d.time).getTime()
+  })
+  return data
+}
+
 
