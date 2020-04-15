@@ -10,13 +10,14 @@ Run.run = function(data, canvas, animation_time, updateF, to_video) {
     timeScale = d3.scaleLinear().domain([0,animation_time]).range([start_time, end_time]);
 
   if (to_video) runToVideo().catch(reason => {throw reason})
-  else run()
+  else return run()
 
   function run() {
     const timer = d3.timer(t => {
       if (t > 30000) timer.stop()
       tick(t)
     })
+    return timer
   }
 
   async function runToVideo() {

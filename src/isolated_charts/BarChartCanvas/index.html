@@ -3,23 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>barchart canvas</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.js"></script>
 
   <style>
+    * {
+      box-sizing: content-box;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      color: white;
+      /*background-color: black;*/
+      /*color: white;*/
+    }
+
+    input[type='number'] {
+      max-width: 70px;
     }
   </style>
 
 </head>
 <body>
-<div id="configuration"></div>
-<canvas style="border: solid white"></canvas>
-<script type="module" src="index.js"></script>
+<div id="app">
+  <div>
+    <ul class="tabs" style="width: max-content; min-width: 400px" id="main_tabs">
+      <li class="tab col s6"><a class="active" href="#visual_tab">Visual</a></li>
+      <li class="tab col s6"><a href="#data_tab">Data</a></li>
+    </ul>
+    <div id="visual_tab">
+      <div class="row">
+        <div class="col s12 m8">
+          <div>
+            <a id="replay" class="waves-effect waves-light btn"><i class="material-icons left">replay</i>replay</a>
+            <a id="pause" class="waves-effect waves-light btn"><i class="material-icons left">pause</i>pause</a>
+          </div>
+          <canvas style="border: solid #ee6e73"></canvas>
+
+        </div>
+        <div class="col s12 m4" id="side_bar_config">
+
+        </div>
+      </div>
+    </div>
+    <div id="data_tab">
+      <div class="row">
+        <div class="col s8">
+          <div id="configuration"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module" src="index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="module">
+    {
+      const el = document.querySelector("#main_tabs"),
+        instance = M.Tabs.init(el, {});
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.collapsible');
+      var instances = M.Collapsible.init(elems, {});
+    });
+  </script>
 </body>
 </html>

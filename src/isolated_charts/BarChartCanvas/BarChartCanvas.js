@@ -21,6 +21,12 @@ BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, tr
   self.transition_time = transition_time;
 }
 
+BarChartCanvas.prototype.clear = function() {
+  const self = this;
+  self.nodes = {}
+  self.ticks = {}
+}
+
 BarChartCanvas.prototype.update = function(data, t) {
   const self = this;
   self.updateRects(data, t)

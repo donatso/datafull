@@ -42,3 +42,10 @@ style.calculateDims = function({width, height}) {
 
   return dim
 }
+
+style.resolutions = {
+  SD: {width: 640, height: 480},
+  HD: {width: 1280, height: 720},
+  FHD: {width: 1920, height: 1080},
+  UHD: {width: 3840, height: 2160},
+}

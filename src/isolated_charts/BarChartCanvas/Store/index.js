@@ -13,10 +13,10 @@ export default function Store() {
   self.data_stash = [];
   self.d3x = null;
   self.d3y = null;
+
+  self.resolution = "HD"
   self.animation_time = 360 * 1000;
   self.transition_time = 1000;
-  self.current_time = ""
-  self.initialized = false;
 
   self.barChart = new BarChartCanvas();
 }
@@ -24,14 +24,25 @@ export default function Store() {
 Store.prototype.initial = function (data) {
   const self = this;
 
-  self.dim = Style.calculateDims({width: 1280, height: 720});
-  self.d3_color = Style.setupColors()
-  self.data_stash = Data.structureData(data);
+  self.data = data;
+  self.configure()
+}
+
+Store.prototype.configure = function() {
+  const self = this;
+
+  self.dim = Style.calculateDims(Style.resolutions[self.resolution]);
+  ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
+  self.d3_color = Style.setupColors();
+  Dom.setupResponsiveCanvas.call(self)
+
+  self.data_stash = Data.structureData(JSON.parse(JSON.stringify(self.data)));
   ;[self.d3x, self.d3y] = Data.setupAxis(self.dim);
   console.log(self.data_stash)
-  ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
 
+  self.barChart.clear()
   self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
+
   self.bg_image = new Image();
   self.bg_image.src = "./data/youtubebackground.jpg"
 }
@@ -44,7 +55,7 @@ Store.prototype.handleFile = function (file_data, file_name) {
 
 Store.prototype.run = function () {
   const self = this;
-  Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
+  self.timer = Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
 }
 
 Store.prototype.update = function(data, t, time) {
@@ -63,6 +74,18 @@ Store.prototype.draw = function (time) {
   const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
   Canvas.drawTime(ctx, dim, time);
+}
+
+Store.prototype.stop = function() {
+  const self = this;
+  if (self.timer) self.timer.stop();
+}
+
+Store.prototype.restart = function () {
+  const self = this;
+  self.stop()
+  self.configure()
+  self.run()
 }
 
 
