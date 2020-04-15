@@ -34,11 +34,12 @@ style.calculateDims = function({width, height}) {
     width,
     height,
     rect: {
-      x_offset: 150,
-      y_offset: 150,
-      width: width - 150 - 200
+      x_offset: width*.1,
+      y_offset: height*.2,
     }
   }
+  dim.rect.width = width - dim.rect.x_offset - dim.rect.y_offset
+
 
   return dim
 }

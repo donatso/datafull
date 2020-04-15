@@ -5,7 +5,7 @@ import SideBarConfig from "./components/SideBarConfig.js"
 const store = new Store();
 
 {
-  store.title = "GOT screen time by episodes in seconds"
+  store.title = "GOT screen time in seconds"
   store.background_url = store.bg_image.src = "./data/backgroundgot.jpg"
   store.counter_text = "Episode:"
   fetch("./data/got_screentime.tsv").then(resp => resp.text()).then(raw_data => {

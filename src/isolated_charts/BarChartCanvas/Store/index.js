@@ -16,11 +16,12 @@ export default function Store() {
 
   self.background_url = ""
   self.bg_image = new Image()
-  self.title = "Denis"
+  self.title = ""
   self.counter_text = ""
-  self.resolution = "HD"
+  self.resolution = "SD"
   self.animation_time = 360 * 1000;
   self.transition_time = 1000;
+  self.text_scale = 1
 
   self.barChart = new BarChartCanvas();
 
@@ -37,6 +38,7 @@ Store.prototype.configure = function() {
   const self = this;
 
   self.dim = Style.calculateDims(Style.resolutions[self.resolution]);
+  self.text_scale = [.5, .7, 1.1, 1.8][(["SD", "HD", "FHD", "UHD"].indexOf(self.resolution))]
   ;[self.canvas, self.ctx] = Dom.setupCanvas(self.dim);
   self.d3_color = Style.setupColors();
 
@@ -45,7 +47,7 @@ Store.prototype.configure = function() {
   console.log(self.data_stash)
 
   self.barChart.clear()
-  self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time)
+  self.barChart.updateState(self.ctx, self.dim, self.d3x, self.d3y, self.d3_color, self.transition_time, self.text_scale)
 }
 
 Store.prototype.handleFile = function (file_data, file_name) {
@@ -57,11 +59,15 @@ Store.prototype.handleFile = function (file_data, file_name) {
 
 Store.prototype.run = function () {
   const self = this;
+  self.stop()
+  self.configure()
   self.timer = Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), false)
 }
 
 Store.prototype.runRecord = function () {
   const self = this;
+  self.stop()
+  self.configure()
   self.timer = Run.run(self.data_stash, self.canvas, self.animation_time, self.update.bind(self), true)
 }
 
@@ -80,8 +86,8 @@ Store.prototype.draw = function (time) {
   const self = this;
   const ctx = self.ctx, dim = self.dim, d3x = self.d3x;
 
-  Canvas.drawTime(ctx, dim, time, self.counter_text);
-  Canvas.drawTitle(ctx, dim, self.title);
+  Canvas.drawTime(ctx, dim, time, self.counter_text, self.text_scale);
+  Canvas.drawTitle(ctx, dim, self.title, self.text_scale);
 }
 
 Store.prototype.stop = function() {
@@ -91,8 +97,6 @@ Store.prototype.stop = function() {
 
 Store.prototype.restart = function () {
   const self = this;
-  self.stop()
-  self.configure()
   self.run()
 }
 

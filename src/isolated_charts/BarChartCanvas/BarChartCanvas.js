@@ -11,7 +11,7 @@ export default function BarChartCanvas() {
   self.d3y = null;
 }
 
-BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, transition_time) {
+BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, transition_time, text_scale) {
   const self = this;
   self.ctx = ctx;
   self.dim = dim;
@@ -19,6 +19,7 @@ BarChartCanvas.prototype.updateState = function(ctx, dim, d3x, d3y, d3_color, tr
   self.d3y = d3y;
   self.d3_color = d3_color;
   self.transition_time = transition_time;
+  self.text_scale = text_scale;
 }
 
 BarChartCanvas.prototype.clear = function() {
@@ -123,7 +124,9 @@ BarChartCanvas.prototype.draw = function() {
   const self = this;
   const ctx = self.ctx,
     nodes = self.nodes,
-    dim = self.dim
+    dim = self.dim,
+    text_scale = self.text_scale,
+    rect_h = self.d3y.bandwidth()
 
   ctx.translate(dim.rect.x_offset, dim.rect.y_offset);
   drawRectNodes()
@@ -150,26 +153,29 @@ BarChartCanvas.prototype.draw = function() {
     function drawRectText(a, d) {
       ctx.save();ctx.beginPath();ctx.rect(0, a.y, a.w, a.h);ctx.clip();
 
+      const fs = 32*text_scale
       ctx.fillStyle = "white";
-      ctx.font = '32px sans-serif';
+      ctx.font = fs+'px sans-serif';
       ctx.textAlign = "end";
-      ctx.fillText(d.name, a.w - 15, a.y + a.h / 2 + 32 / 2);
+      ctx.fillText(d.name, a.w - 15, a.y + a.h / 2 + fs / 2);
 
       ctx.restore()
     }
 
     function drawTextRight(a, d) {
+      const fs = 24*text_scale
       ctx.fillStyle = "white";
-      ctx.font = '24px sans-serif';
+      ctx.font = fs+'px sans-serif';
       ctx.textAlign = "start";
-      ctx.fillText(Math.floor(d.value).toLocaleString("en-US"), a.w + 10, a.y + a.h / 2 + 24 / 2);
+      ctx.fillText(Math.floor(d.value).toLocaleString("en-US"), a.w + 10, a.y + a.h / 2 + fs / 2);
     }
 
     function drawTextLeft(a, d) {
+      const fs = 24*text_scale
       ctx.fillStyle = "white";
-      ctx.font = '24px sans-serif';
+      ctx.font = fs+'px sans-serif';
       ctx.textAlign = "end";
-      ctx.fillText(d.type, -10, a.y + a.h / 2 + 24 / 2);
+      ctx.fillText(d.type, -10, a.y + a.h / 2 + fs / 2);
     }
   }
 
@@ -206,9 +212,10 @@ BarChartCanvas.prototype.draw = function() {
     }
 
     function drawLabel(a, d) {
+      const fs = 24*text_scale
       ctx.textAlign = "center";
       ctx.fillStyle = "#fff";
-      ctx.font = '24px sans-serif';
+      ctx.font = fs+'px sans-serif';
       ctx.fillText(d.name, a.x, -30);
 
       ctx.restore()
