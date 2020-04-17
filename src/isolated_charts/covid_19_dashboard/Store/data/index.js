@@ -1,30 +1,17 @@
-export default function Data() {
-  const self = this;
+const Data = {};
+export default Data;
 
-  self.data_stash = [];
-  self.active_data = [];
+Data.loadTimeSeries = async function () {
+  const data = await fetch("./data/time_series_covid19_confirmed_global.csv").then(resp => resp.text())
+  return data
 }
 
-Data.prototype.insert = function (data, type) {
-  const self = this;
-  self.remove(type)
-
+Data.structureData = function (raw_data) {
+  let data = d3.dsvFormat(',').parse(raw_data);
   data.forEach(d => {
-    Data.tagData(d, type)
-    self.data_stash.push(d)
+    d.Lat = +d.Lat
+    d.Long = +d.Long
   })
 
-  self.active_data = self.data_stash.slice(0);
+  return data
 }
-
-Data.prototype.remove = function(type) {
-  const self = this;
-  self.data_stash = self.data_stash.filter(d => d.__d.type !== type)
-  self.active_data = self.active_data.filter(d => d.__d.type !== type)
-}
-
-Data.tagData = function(d, type) {
-  d.__d = {type};
-}
-
-

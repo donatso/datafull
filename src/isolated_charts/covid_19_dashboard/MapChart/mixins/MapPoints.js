@@ -1,19 +1,17 @@
+const Points = {}
+export default Points;
 
-export default function () {
-
-  function draw(ctx, proj) {
-    const data = dashboardBase.D.data;
-    for (let i = 0; i < data.length; i++) {
-      const coor = data[i].__coor;
-      if (!coor) continue;
-      ctx.fillStyle = "rgba(173,216,230,.5)";
-      ctx.beginPath();
-      ctx.arc(...proj(coor), 4, 0, 2 * Math.PI);
-      ctx.fill();
-    }
+Points.drawMultiple = function (data, ctx, coorGetter, proj, style) {
+  for (let i = 0; i < data.length; i++) {
+    const coor = coorGetter(data[i]);
+    if (!coor) continue;
+    Points.draw(ctx, coor, proj, style)
   }
+}
 
-  return {
-    draw
-  }
+Points.draw = function (ctx, coor, proj, style) {
+  ctx.fillStyle = style.fill;
+  ctx.beginPath();
+  ctx.arc(...proj(coor), style.r, 0, 2 * Math.PI);
+  ctx.fill();
 }

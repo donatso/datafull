@@ -1,21 +1,22 @@
-function draw(data, geom_key, ctx, geoPath, style) {
-  geoPath.context(ctx);  // TODO: check if nesseccery
-
+function drawMultiple(data, geom_key, ctx, geoPath, style) {
   for (let i = 0; i < data.length; i++) {
-    const geom = data[i][geom_key];
-    if (!geom) continue;
-
-    ctx.lineWidth = style["stroke-width"];
-    ctx.strokeStyle = style.color;
-    ctx.fillStyle = style.fill;
-
-    ctx.beginPath();
-    ctx.setLineDash([]);
-    geoPath(geom);
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
+    const geo = data[i][geom_key];
+    if (!geo) continue;
+    draw(geo, ctx, geoPath, style)
   }
+}
+
+function draw(geo, ctx, geoPath, style) {
+  ctx.lineWidth = style["stroke-width"];
+  ctx.strokeStyle = style.color;
+  ctx.fillStyle = style.fill;
+
+  ctx.beginPath();
+  ctx.setLineDash([]);
+  geoPath(geo);
+  ctx.fill();
+  ctx.stroke();
+  ctx.closePath();
 }
 
 export default {

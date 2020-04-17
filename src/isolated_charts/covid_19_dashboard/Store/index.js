@@ -1,22 +1,20 @@
 import Event from "./event/index.js";
 import Data from "./data/index.js"
-import Filter from "./filter/index.js"
 
-function Store() {
+export default function Store() {
   const self = this;
   self.event = new Event();
-  self.data = new Data();
-  self.filter = new Filter(()=>self.data.data_stash,(data)=>self.data.active_data=data)
   self.methods = {};
 }
 
-Store.inherit = function (child) {
-  const F = function () {};
-  F.prototype = Store.prototype;
-  child.prototype = new F();
-  return child
+Store.prototype.getData = function () {
+  return Data.loadTimeSeries()
 }
 
-export default Store;
+Store.prototype.structureData = function (raw_data) {
+  const self = this;
+  self.data = Data.structureData(raw_data)
+  self.dates = self.data.columns.map(d => new Date(d)).filter(d => d > 0)
+}
 
 

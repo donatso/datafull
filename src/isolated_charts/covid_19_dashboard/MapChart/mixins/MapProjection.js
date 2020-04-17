@@ -1,4 +1,4 @@
-function setup({projection_type,}) {
+function setup({projection_type}) {
   const d3_projection = projection_type ? d3[projection_type]() : d3.geoMercator();
   return d3_projection
 }
