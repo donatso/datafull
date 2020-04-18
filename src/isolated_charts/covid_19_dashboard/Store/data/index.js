@@ -1,5 +1,6 @@
 const Data = {};
 export default Data;
+import "../../MapChart/plugins/topojson-client.js"
 
 Data.loadTimeSeries = async function () {
   let raw_data = await fetch("./data/time_series_covid19_confirmed_global.csv").then(resp => resp.text())
@@ -36,9 +37,10 @@ Data.getTotal = function(data, dates) {
 }
 
 Data.getWorldMapGeoJson = async function () {
-  const world_map_url = "./data/world.geo.json",
-    world_map_geo_json = await fetch(world_map_url).then(resp => resp.json())
+  let world_map_url = "./data/world.50.geo.json",
+    world_map_geo_json = await fetch(world_map_url).then(resp => resp.json());
 
+  world_map_geo_json = topojson.feature(world_map_geo_json,world_map_geo_json.objects["world.50"])
   console.log(world_map_geo_json)
   return world_map_geo_json
 }

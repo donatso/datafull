@@ -31,11 +31,12 @@ Store.prototype.createSideList = function () {
     last_date = dates_key[dates_key.length-1],
     side_list = document.querySelector("#side_list");
 
+  const data_countries_total_list = Object.entries(data_countries_total).map(([k,v]) => ({country: k, value: v[last_date]}))
+  data_countries_total_list.sort((a,b) => b.value - a.value)
   let html = "<ul class='collection'>"
-  for (let country in data_countries_total) {
-    if (!data_countries_total.hasOwnProperty(country)) continue
-    html += `<li class="collection-item">${country} | ${data_countries_total[country][last_date]}</li>`
-  }
+  data_countries_total_list.forEach(d => {
+    html += `<li class="collection-item">${d.country} | ${d.value.toLocaleString()}</li>`
+  })
   html += "</ul>"
   side_list.innerHTML = html
 }

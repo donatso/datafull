@@ -5,6 +5,9 @@
 .left-col {
   min-width: 200px;
   width: 20%;
+  height: 700px;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .mid-col {
