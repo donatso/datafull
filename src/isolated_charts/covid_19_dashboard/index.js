@@ -5,34 +5,38 @@ import Slider from "./Slider/index.js"
 
 const store = new Store();
 
+store.event.on("updateSelectedDate", store.updateSelectedDate.bind(store))
+store.event.on("update", store.update.bind(store));
+
 (async () => {
   await store.getData();
   store.structureData();
-  store.createSideList()
+  store.update()
   {
     const cont = document.querySelector("#map_cont")
     cont.style.width = "100%"
     cont.style.height = "500px"
     const map = new Map(cont, store);
     map.create()
-    map.draw()
-  }
-  {
-    const cont = document.querySelector("#brush_cont")
-    cont.style.width = "100%"
-    cont.style.height = "200px"
-    const lineChart = new LineChart(cont, store);
-    lineChart.create()
-    lineChart.draw()
+    map.update()
+    store.event.on("update", map.update.bind(map))
   }
   // {
-  //   const cont = document.querySelector("#app").appendChild(document.createElement("div"))
-  //   cont.style.width = "900px"
-  //   cont.style.height = "100px"
-  //   const slider = new Slider(cont, store);
-  //   slider.create()
-  //   slider.update()
+  //   const cont = document.querySelector("#brush_cont")
+  //   cont.style.width = "100%"
+  //   cont.style.height = "200px"
+  //   const lineChart = new LineChart(cont, store);
+  //   lineChart.create()
+  //   lineChart.draw()
   // }
+  {
+    const cont = document.querySelector("#slider_cont")
+    cont.style.width = "100%"
+    cont.style.height = "50px"
+    const slider = new Slider(cont, store);
+    slider.create()
+    slider.update()
+  }
 })();
 
 

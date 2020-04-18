@@ -56,7 +56,6 @@ Slider.prototype.update = function () {
     svg = cont.select("svg.chart"),
     main_g = svg.select("g.main_g")
 
-  console.log(dates)
   main_g.html("")
   drawSlider(dates)
 
@@ -75,13 +74,13 @@ Slider.prototype.update = function () {
       .max(d3x.domain()[1])
       .width(dim.width)
       // .tickFormat(d3.timeFormat(time_format))
-      .default([dates[0], dates[1]])
+      // .default([dates[0], dates[1]])
       .fill('#2196f3')
       .ticks(7)
       .marks(dates)
       .on("onchange", date => self.store.event.trigger("updateSelectedDate", date));
 
-    if (self.store.selected_dates) self.slider.default(self.store.selected_dates)
+    if (self.store.selected_date_key) self.slider.default(new Date(self.store.selected_date_key))
 
     main_g.append("g").call(self.slider);
   }

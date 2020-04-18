@@ -3,8 +3,9 @@ export default Data;
 import "../../MapChart/plugins/topojson-client.js"
 
 Data.loadTimeSeries = async function () {
-  let raw_data = await fetch("./data/time_series_covid19_confirmed_global.csv").then(resp => resp.text())
-  let data = d3.dsvFormat(',').parse(raw_data);
+  const data_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+    raw_data = await fetch(data_url).then(resp => resp.text()),
+    data = d3.dsvFormat(',').parse(raw_data);
   return data
 }
 

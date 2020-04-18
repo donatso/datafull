@@ -17,7 +17,12 @@ Map.prototype.create = function () {
   self.dim = Style.setupDims(self.cont.getBoundingClientRect());
   [self.canvas, self.ctx] = Dom.setupCanvas(self.cont, self.dim);
   self.world_map_geojson = self.store.world_map_geojson;
-  self.setupStyle = Style.setupStyle(self.store.countries_heatmap)
+}
+
+Map.prototype.update = function() {
+  const self = this;
+  self.setupStyle = Style.setupStyle(self.store.countries_heatmap);
+  self.draw();
 }
 
 Map.prototype.draw = function () {

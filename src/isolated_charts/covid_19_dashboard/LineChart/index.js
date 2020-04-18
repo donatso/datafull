@@ -21,7 +21,6 @@ LineChart.prototype.create = function () {
 LineChart.prototype.draw = function() {
   const self = this;
   self.line_data = Data.setupTotalByDates(self.store.data, self.store.dates_key);
-  console.log(self.line_data);
   [self.d3x, self.d3y] = self.setupAxis();
   const [xValue, yValue] = [d => d.date, d => d.value]
   Chart.draw(self.line_data, self.cont, self.dim, [self.d3x, self.d3y], [xValue, yValue])
