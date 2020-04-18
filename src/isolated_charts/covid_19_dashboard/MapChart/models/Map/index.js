@@ -17,6 +17,7 @@ Map.prototype.create = function () {
   self.dim = Style.setupDims(self.cont.getBoundingClientRect());
   [self.canvas, self.ctx] = Dom.setupCanvas(self.cont, self.dim);
   self.world_map_geojson = self.store.world_map_geojson;
+  self.setupStyle = Style.setupStyle(self.store.countries_heatmap)
 }
 
 Map.prototype.draw = function () {
@@ -29,8 +30,9 @@ Map.prototype.draw = function () {
     geoPath.context(ctx);
 
   ctx.clearRect(0,0,dim.width, dim.height)
-  MapChart.polygons.draw(self.world_map_geojson, ctx, geoPath, Style.world_map_bg)
-  MapChart.points.drawMultiple(data, ctx, d => ([d.Long, d.Lat]), projection, Style.points)
+  MapChart.polygons.drawMultiple(self.world_map_geojson.features, d => d, ctx, geoPath, Style.world_map_bg)
+  // MapChart.points.drawMultiple(data, ctx, d => ([d.Long, d.Lat]), projection, Style.points)
+
 
 }
 
