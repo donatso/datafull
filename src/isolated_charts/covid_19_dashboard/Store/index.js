@@ -7,13 +7,15 @@ export default function Store() {
   self.methods = {};
 }
 
-Store.prototype.getData = function () {
-  return Data.loadTimeSeries()
+Store.prototype.getData = async function () {
+  const self = this;
+  self.data = await Data.loadTimeSeries();
+  self.world_map_geojson = await Data.getWorldMapGeoJson();
 }
 
-Store.prototype.structureData = function (raw_data) {
+Store.prototype.structureData = function () {
   const self = this;
-  self.data = Data.structureData(raw_data)
+  self.data = Data.structureData(self.data)
   self.dates_key = self.data.columns.filter(d => new Date(d) > 0)
   self.dates = self.dates_key.map(d => new Date(d))
   self.data_countries_total = Data.totalByCountry(self.data, self.dates_key)

@@ -10,13 +10,13 @@ export default function Map(cont, store) {
   self.store = store;
 }
 
-Map.prototype.create = async function () {
+Map.prototype.create = function () {
   const self = this;
 
   self.d3_projection = MapChart.projection.setup({})
   self.dim = Style.setupDims(self.cont.getBoundingClientRect());
   [self.canvas, self.ctx] = Dom.setupCanvas(self.cont, self.dim);
-  self.world_map_geojson = await Data.getWorldMapGeoJson()
+  self.world_map_geojson = self.store.world_map_geojson;
 }
 
 Map.prototype.draw = function () {

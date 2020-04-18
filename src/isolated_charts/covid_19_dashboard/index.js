@@ -6,15 +6,15 @@ import Slider from "./Slider/index.js"
 const store = new Store();
 
 (async () => {
-  const raw_data = await store.getData();
-  store.structureData(raw_data);
+  await store.getData();
+  store.structureData();
   store.createSideList()
   {
     const cont = document.querySelector("#map_cont")
     cont.style.width = "100%"
     cont.style.height = "500px"
     const map = new Map(cont, store);
-    await map.create()
+    map.create()
     map.draw()
   }
   {

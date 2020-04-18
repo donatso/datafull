@@ -2,12 +2,12 @@ const Data = {};
 export default Data;
 
 Data.loadTimeSeries = async function () {
-  const data = await fetch("./data/time_series_covid19_confirmed_global.csv").then(resp => resp.text())
+  let raw_data = await fetch("./data/time_series_covid19_confirmed_global.csv").then(resp => resp.text())
+  let data = d3.dsvFormat(',').parse(raw_data);
   return data
 }
 
-Data.structureData = function (raw_data) {
-  let data = d3.dsvFormat(',').parse(raw_data);
+Data.structureData = function (data) {
   data.forEach(d => {
     d.Lat = +d.Lat
     d.Long = +d.Long
@@ -35,6 +35,13 @@ Data.getTotal = function(data, dates) {
   return total_data
 }
 
+Data.getWorldMapGeoJson = async function () {
+  const world_map_url = "./data/world.geo.json",
+    world_map_geo_json = await fetch(world_map_url).then(resp => resp.json())
+
+  console.log(world_map_geo_json)
+  return world_map_geo_json
+}
 
 
 function group(data, ...class_getters) {
