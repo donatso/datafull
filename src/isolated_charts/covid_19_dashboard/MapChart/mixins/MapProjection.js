@@ -1,5 +1,6 @@
 function setup({projection_type}) {
   const d3_projection = projection_type ? d3[projection_type]() : d3.geoMercator();
+  d3_projection.scale(1).translate([0, 0]);
   return d3_projection
 }
 
@@ -51,6 +52,16 @@ function parcelCenter(d3_projection, geometries, dim, zoomable_node) {
   t.x = last_t.x * k + x;
   t.y = last_t.y * k + y;
   return t
+}
+
+function geojsonCenter(d3_projection, geojson, dim, scale) {
+  const geoPath = d3.geoPath().projection(d3_projection);
+
+  let b = geoPath.bounds(geojson),
+    k = scale / Math.max((b[1][0] - b[0][0]) / dim.width, (b[1][1] - b[0][1]) / dim.height),
+    [x,y] = [(dim.width - k * (b[1][0] + b[0][0])) / 2, (dim.height - k * (b[1][1] + b[0][1])) / 2];
+
+  return {x,y,k}
 }
 
 function zoomToParcels({data, zoomable_node, d3_projection, d3_zoom, dim, key__geom, opt}) {
@@ -124,6 +135,7 @@ export default {
   posToCoor,
   setupLazyZoom,
   updateProjection,
-  zoomToParcels
+  zoomToParcels,
+  geojsonCenter
 }
 

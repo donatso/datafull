@@ -17,6 +17,10 @@ Map.prototype.create = function () {
   self.dim = Style.setupDims(self.cont.getBoundingClientRect());
   [self.canvas, self.ctx] = Dom.setupCanvas(self.cont, self.dim);
   self.world_map_geojson = self.store.world_map_geojson;
+
+  const t = MapChart.projection.geojsonCenter(self.d3_projection, self.world_map_geojson, self.dim, 1.2);
+  t.y*=.8
+  MapChart.projection.updateProjection(self.d3_projection, t);
 }
 
 Map.prototype.update = function() {
